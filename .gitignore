@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Virtual Environments
+**/venv/
+**/adv_res_venv/
+**/env/
+**/ENV/
+
+# IDE
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Jupyter
+.ipynb_checkpoints/
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Logs and databases
+*.log
+*.sqlite
+
+# Local Development
+.env
+.env.local
+
+# Ollama artifacts
+.ollama/
+models/
+
+# Cache directories
+.math_cache/
+.mypy_cache/
+.pytest_cache/
