@@ -1,0 +1,16 @@
+{
+  "dataset": "gsm8k",
+  "split": "test",
+  "num_samples": 5,
+  "model_accuracy": {
+    "cogito:3b": 0.6,
+    "gemma3": 0.6,
+    "phi4-mini:latest": 0.4
+  },
+  "avg_model_scores": {
+    "cogito:3b": 0.7217300944669366,
+    "gemma3": 0.728037786774629,
+    "phi4-mini:latest": 0.7420109890109889
+  },
+  "best_model": "cogito:3b"
+}

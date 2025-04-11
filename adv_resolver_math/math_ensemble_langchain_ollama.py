@@ -15,7 +15,7 @@ from rich.panel import Panel
 
 # LangChain components
 from langchain.llms import Ollama
-from langchain.chains import LLMChain
+from langchain_core.runnables import RunnablePassthrough, RunnableLambda
 from langchain.prompts import PromptTemplate
 from langchain.callbacks.base import BaseCallbackHandler
 from langchain.callbacks.manager import CallbackManager
@@ -146,14 +146,14 @@ class MathEnsembleSolver:
                         model_name=model_name
                     ) if self.verbose else None
                     
-                    callback_manager = CallbackManager([callback_handler]) if callback_handler else None
+                    callbacks = [callback_handler] if callback_handler else []
                     
                     # Initialize the Ollama LLM with the current model
                     llm = Ollama(
                         model=model_name,
                         base_url=self.ollama_base_url,
                         temperature=self.temperature,
-                        callback_manager=callback_manager,
+                        callbacks=callbacks,
                         num_ctx=4096,
                         num_predict=self.max_tokens,
                     )
@@ -165,7 +165,7 @@ class MathEnsembleSolver:
                     )
                     
                     # Create chain
-                    chain = LLMChain(llm=llm, prompt=prompt)
+                    chain = prompt | llm
                     model_chains[model_name] = chain
                     
                     progress.update(task, completed=1, description=f"[green]Initialized {model_name}[/green]")
@@ -314,7 +314,7 @@ class MathEnsembleSolver:
                 start_time = time.time()
                 
                 # Run the chain
-                solution = chain.run(problem=problem)
+                solution = chain.invoke({"problem": problem})
                 
                 elapsed = time.time() - start_time
                 self.console.print(f"[dim]{model_name} completed in {elapsed:.2f} seconds[/dim]")
@@ -366,7 +366,7 @@ class MathEnsembleSolver:
         async def solve_with_model(model_name, chain):
             try:
                 # Run the chain
-                solution = await chain.arun(problem=problem)
+                solution = await chain.ainvoke({"problem": problem})
                 # Score the solution
                 score = self._score_solution(problem, solution)
                 return model_name, solution, score
@@ -461,7 +461,7 @@ class MathEnsembleSolver:
         
         # Load the dataset
         try:
-            dataset = load_dataset(dataset_name, split=split)
+            dataset = load_dataset(dataset_name, 'main', split=split)
         except Exception as e:
             self.console.print(f"[red]Error loading dataset: {e}[/red]")
             return {"error": str(e)}
@@ -742,7 +742,7 @@ class MetaMathEnsemble:
         
         # Load the dataset
         try:
-            dataset = load_dataset(dataset_name, split=split)
+            dataset = load_dataset(dataset_name, 'main', split=split)
         except Exception as e:
             self.console.print(f"[red]Error loading dataset: {e}[/red]")
             return {"error": str(e)}
