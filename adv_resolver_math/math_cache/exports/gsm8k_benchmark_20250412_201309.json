@@ -4,12 +4,12 @@
   "num_samples": 5,
   "model_accuracy": {
     "cogito:3b": 0.0,
-    "gemma3": 0.0,
+    "gemma3:1b": 0.0,
     "phi4-mini:latest": 0.0
   },
   "avg_model_scores": {
     "cogito:3b": 0.0,
-    "gemma3": 0.0,
+    "gemma3:1b": 0.0,
     "phi4-mini:latest": 0.0
   },
   "best_model": "cogito:3b"

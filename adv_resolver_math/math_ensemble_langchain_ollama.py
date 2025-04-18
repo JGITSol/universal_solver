@@ -87,7 +87,7 @@ class MathEnsembleSolver:
         verbose: bool = True
     ):
         self.console = Console()
-        self.models = models or ["cogito:3b", "gemma3", "phi4-mini:latest"]
+        self.models = models or ["cogito:3b", "gemma3:1b", "phi4-mini:latest"]
         self.mode = mode.lower()
         self.temperature = temperature
         self.max_tokens = max_tokens

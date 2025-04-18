@@ -1,0 +1,3 @@
+{
+  "error": "(MaxRetryError(\"HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /api/datasets/gsm8k/revision/e53f048856ff4f594e959d75785d2c2d37b678ee (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x000001A625FCC0D0>: Failed to establish a new connection: [WinError 10055] Nie mo\u017cna przeprowadzi\u0107 operacji na gnie\u017adzie, poniewa\u017c w systemie brakuje miejsca na bufor lub poniewa\u017c zosta\u0142a zape\u0142niona kolejka'))\"), '(Request ID: 00ce967d-74fb-4ab4-b6d4-f33e5b33dbb1)')"
+}
