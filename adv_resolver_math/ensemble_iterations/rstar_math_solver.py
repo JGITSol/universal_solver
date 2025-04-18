@@ -55,8 +55,14 @@ class RStarMathSolver(LatentSpaceMathSolver):
         return min(1.0, reward)
 
     def solve(self, problem: str):
-        # Use parent solve, then enhance with verification and reward
-        result = super().solve(problem)
+        # Generate solutions via each agent then enhance with verification and reward
+        solutions = [self.get_solution(agent, problem) for agent in self.agents]
+        result = {
+            "solutions": [
+                {"agent_name": s.agent_name, "answer": s.answer, "explanation": s.explanation, "confidence": s.confidence}
+                for s in solutions
+            ]
+        }
         for sol in result.get('solutions', []):
             if not isinstance(sol, Solution):
                 sol_filtered = {k: sol[k] for k in ['agent_name', 'answer', 'explanation', 'confidence'] if k in sol}

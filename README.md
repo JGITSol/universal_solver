@@ -5,7 +5,7 @@ Universal Solver is a modular, extensible platform for advanced mathematical pro
 
 ## Project Structure
 
-```
+```text
 ├── adv_resolver_math/         # Advanced math ensemble solver (LangChain, Ollama, SymPy, etc.)
 │   ├── math_ensemble_adv_ms_hackaton.py
 │   ├── math_ensemble_langchain_ollama.py
@@ -37,6 +37,7 @@ Universal Solver is a modular, extensible platform for advanced mathematical pro
 ## Quickstart
 
 ### 1. Clone and Prepare
+
 ```sh
 git clone <repo-url> universal_solver
 cd universal_solver
@@ -44,31 +45,45 @@ cd universal_solver
 
 ### 2. Setup Environments
 - For advanced math ensemble:
-  ```sh
-  cd adv_resolver_math
-  python -m venv adv_res_venv
-  adv_res_venv\Scripts\activate  # On Windows
-  pip install -r requirements.txt
-  ```
+
+```sh
+cd adv_resolver_math
+python -m venv adv_res_venv
+adv_res_venv\Scripts\activate  # On Windows
+pip install -r requirements.txt
+```
+
 - For KAN module:
-  ```sh
-  cd ../KAN
-  python -m venv venv
-  venv\Scripts\activate
-  pip install -r requirements.txt
-  ```
+
+```sh
+cd ../KAN
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+```
 
 ### 3. Run Example
 - Advanced Math Ensemble:
-  ```sh
-  cd adv_resolver_math
-  python math_ensemble_langchain_ollama.py
-  ```
+
+```sh
+cd adv_resolver_math
+python math_ensemble_langchain_ollama.py
+```
+
 - KAN Symbolic Regression:
-  ```sh
-  cd KAN
-  python SimpleSymbolicRegressionProject.py
-  ```
+
+```sh
+cd KAN
+python SimpleSymbolicRegressionProject.py
+```
+
+### 4. Generate Test Coverage
+
+```sh
+pytest --cov=adv_resolver_math --cov-report=html
+```
+
+Open `htmlcov/index.html` in your browser to view the coverage report.
 
 ## Contribution Guidelines
 - See `project_guidelines/` for hackathon rules, agent specs, and memory module details.

@@ -1,6 +1,8 @@
 import sys
-import os
+import os, sys
+import pathlib
 
-# Ensure adv_resolver_math is importable for all submodules
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '')))
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), 'adv_resolver_math')))
+# Ensure project root is on PYTHONPATH
+root = pathlib.Path(__file__).parent.resolve()
+sys.path.insert(0, str(root))
+sys.path.insert(0, str(root / 'adv_resolver_math'))
