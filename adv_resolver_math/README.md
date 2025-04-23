@@ -47,6 +47,28 @@ This will present a menu with options to:
 4. Run a meta-ensemble benchmark
 5. Run all benchmarks (comprehensive)
 
+## r*-Math Solver Usage
+
+Example:
+```python
+from adv_resolver_math.ensemble_iterations.rstar_math_solver import RStarMathSolver
+from adv_resolver_math.math_ensemble_adv_ms_hackaton import Agent
+
+agents = [
+    Agent("A", "phi4-mini:latest", "Prompt A", 0.2, 1000),
+    Agent("B", "phi4-mini:latest", "Prompt B", 0.3, 1000)
+]
+solver = RStarMathSolver(agents)
+result = solver.solve("x = 2 + 2")
+print(result)
+```
+
+## CLI
+
+```sh
+usolve rstar "x = 2 + 2"
+```
+
 ## Project Structure
 
 - `math_ensemble_langchain_ollama.py`: Main implementation file
