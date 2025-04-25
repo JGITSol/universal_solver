@@ -153,9 +153,12 @@ def collect_decisions(solver_name, problem_type, problem, result, agent_solution
         })
     return rows
 
+from datetime import datetime
+
 def export_results(df: pd.DataFrame, out_dir: Path):
-    excel_path = out_dir / "math_showcase_results.xlsx"
-    parquet_path = out_dir / "math_showcase_results.parquet"
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    excel_path = out_dir / f"math_showcase_results_{timestamp}.xlsx"
+    parquet_path = out_dir / f"math_showcase_results_{timestamp}.parquet"
     df.to_excel(excel_path, index=False)
     df.to_parquet(parquet_path, index=False)
     theme_console.print(f"[bold green]Exported results to:[/bold green] [cyan]{excel_path}[/cyan] and [cyan]{parquet_path}[/cyan]")
