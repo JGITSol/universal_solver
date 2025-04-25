@@ -25,9 +25,16 @@ OUTPUT_DIR.mkdir(exist_ok=True)
 
 # Define a pool of diverse agents (can adjust models as available on your Ollama server)
 agents = [
-    Agent(name="Cogito", model="cogito:3b", system_prompt="You are a rigorous mathematician.", temperature=0.1, max_tokens=512),
-    Agent(name="Gemma", model="gemma3:1b", system_prompt="Solve math problems step by step with detailed reasoning.", temperature=0.2, max_tokens=512),
-    Agent(name="Phi4", model="phi4-mini:latest", system_prompt="Be concise and accurate in your math solutions.", temperature=0.1, max_tokens=512)
+    # Local/ollama agents
+    Agent(name="Cogito", model="cogito:3b", system_prompt="You are a rigorous mathematician.", temperature=0.1, max_tokens=512, provider="ollama"),
+    Agent(name="Gemma", model="gemma3:1b", system_prompt="Solve math problems step by step with detailed reasoning.", temperature=0.2, max_tokens=512, provider="ollama"),
+    Agent(name="Phi4", model="phi4-mini:latest", system_prompt="Be concise and accurate in your math solutions.", temperature=0.1, max_tokens=512, provider="ollama"),
+    # SOTA OpenRouter agents
+    Agent(name="LlamaNemotronUltra", model="nvidia/llama-3.1-nemotron-ultra-253b-v1:free", system_prompt="You are a SOTA LLM. Solve with detailed reasoning.", temperature=0.1, max_tokens=512, provider="openrouter"),
+    Agent(name="Llama4Maverick", model="meta-llama/llama-4-maverick:free", system_prompt="You are a SOTA LLM. Solve with detailed reasoning.", temperature=0.1, max_tokens=512, provider="openrouter"),
+    # SOTA Gemini agents
+    Agent(name="GeminiFlash", model="gemini-2.5-flash-preview-04-17", system_prompt="You are Google Gemini. Solve with step-by-step logic.", temperature=0.1, max_tokens=512, provider="gemini"),
+    Agent(name="GeminiLite", model="gemini-2.0-flash-lite", system_prompt="You are Google Gemini. Solve with step-by-step logic.", temperature=0.1, max_tokens=512, provider="gemini"),
 ]
 
 # Instantiate solvers

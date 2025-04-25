@@ -17,6 +17,7 @@ memory_profiler>=0.61.0
 jupyter>=1.0.0
 nbconvert>=7.16.0
 datasets>=2.15.0
+python-dotenv>=1.0.0
 
 # Rich terminal interface
 rich>=13.6.0

@@ -23,6 +23,7 @@ class Agent:
     system_prompt: str
     temperature: float
     max_tokens: int
+    provider: str = "ollama"  # 'ollama', 'openrouter', or 'gemini'
     
 @dataclass
 class Solution:
@@ -55,6 +56,8 @@ class MathProblemSolver:
     def get_solution(self, agent: Agent, problem: str, previous_solutions=None) -> Solution:
         """Have an agent solve a math problem"""
         
+        from adv_resolver_math.api_clients import openrouter_chat, gemini_chat
+        
         messages = [{"role": "system", "content": agent.system_prompt}]
         
         prompt = f"Problem: {problem}\n\nSolve this step by step. Be thorough in your analysis."
@@ -69,16 +72,29 @@ class MathProblemSolver:
         messages.append({"role": "user", "content": prompt})
         
         try:
-            response = self.client.invoke(
-                messages[-1]["content"],
-                model=agent.model,
-                options={
-                    "temperature": agent.temperature,
-                    "num_predict": agent.max_tokens
-                }
-            )
-            
-            explanation = response
+            if agent.provider == "openrouter":
+                explanation = openrouter_chat(
+                    agent.model,
+                    messages,
+                    temperature=agent.temperature,
+                    max_tokens=agent.max_tokens
+                )
+            elif agent.provider == "gemini":
+                explanation = gemini_chat(
+                    agent.model,
+                    messages,
+                    temperature=agent.temperature,
+                    max_tokens=agent.max_tokens
+                )
+            else:  # ollama/local
+                explanation = self.client.invoke(
+                    messages[-1]["content"],
+                    model=agent.model,
+                    options={
+                        "temperature": agent.temperature,
+                        "num_predict": agent.max_tokens
+                    }
+                )
             
             # Extract answer using pattern matching
             answer = explanation
