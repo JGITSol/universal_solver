@@ -1,64 +1,208 @@
 <img src="https://r2cdn.perplexity.ai/pplx-full-logo-primary-dark%402x.png" class="logo" width="120"/>
 
-# Advanced Math Ensemble Solver: Integrating LangChain and Ollama for State-of-the-Art Mathematical Reasoning
+# Universal Solver: Comprehensive Technical Report
 
-This report presents a comprehensive redesign of the math ensemble system, transforming it from the original implementation to a robust solution leveraging LangChain and Ollama for local model execution. The system supports both sequential and parallel processing modes, implements industry-standard benchmarking, and integrates sophisticated symbolic math validation to create a competitive entry for AI Math Hackathons.
+---
 
-## System Architecture Overview
+## Table of Contents
+1. [Introduction](#introduction)
+2. [System Architecture](#system-architecture)
+3. [Core Modules and Components](#core-modules-and-components)
+4. [Workflow and Usage](#workflow-and-usage)
+5. [Testing, Quality, and CI/CD](#testing-quality-and-cicd)
+6. [Current Limitations and Known Issues](#current-limitations-and-known-issues)
+7. [Extensibility and Collaboration](#extensibility-and-collaboration)
+8. [Recent Progress and Future Directions](#recent-progress-and-future-directions)
+9. [Appendix: Model Specs, Prompting, and Licensing](#appendix-model-specs-prompting-and-licensing)
 
-The redesigned system replaces the original model implementations with locally-run open-source models via Ollama, orchestrated through LangChain's flexible chain architecture. This approach provides several advantages:
+---
 
-```python
-# math_ensemble_langchain_ollama.py
-import os
-import re
-import time
-import json
-import asyncio
-import sympy
-import pandas as pd
-import matplotlib.pyplot as plt
-from typing import List, Dict, Any, Optional, Union
-from rich.console import Console
-from rich.table import Table
-from rich.progress import Progress, SpinnerColumn, TextColumn
-from rich.panel import Panel
+## Introduction
 
-# LangChain components
-from langchain.llms import Ollama
-from langchain.chains import LLMChain
-from langchain.prompts import PromptTemplate
-from langchain.callbacks.base import BaseCallbackHandler
-from langchain.callbacks.manager import CallbackManager
-from langchain_core.runnables import RunnableConfig
-from langchain.schema.runnable import RunnablePassthrough
+Universal Solver is a modular, extensible platform for advanced mathematical problem solving, symbolic regression, and AI-driven research workflows. It integrates state-of-the-art models, ensemble methods, and collaborative tools to accelerate research and innovation. The system is designed for both hackathon-grade rapid prototyping and long-term research extensibility.
 
-# For benchmarking
-import datasets
-from datasets import load_dataset
+This report provides a deep technical overview of the current state of the project, including system architecture, module design, workflows, testing strategies, extensibility, and future plans.
+
+---
+
+## System Architecture
+
+The project is organized into several core modules:
+- **adv_resolver_math/**: Advanced math ensemble solver integrating LangChain, Ollama, and symbolic math tools.
+- **KAN/**: Kolmogorov-Arnold Networks for symbolic regression and interpretable machine learning.
+- **collab_training_ntbks/**: Collaborative Jupyter notebooks for model training and experimentation.
+- **docs/**: Technical documentation, guides, and testing strategies.
+- **model/**: Model state, configs, and history.
+- **project_guidelines/**: Hackathon and project guidelines, agent specs, and architecture blueprints.
+
+### High-Level Diagram
+
+```mermaid
+graph TD
+    A[User/Researcher] --> B[CLI / Notebook]
+    B --> C1[adv_resolver_math]
+    B --> C2[Symbolic Regression (KAN)]
+    C1 --> D1[LangChain]
+    C1 --> D2[Ollama LLMs]
+    C1 --> D3[SymPy Validator]
+    C1 --> D4[Meta-Ensemble Controller]
+    D1 --> E1[Local/Remote Models]
+    D2 --> E2[Ollama Service]
+    C2 --> F1[PyTorch]
+    C2 --> F2[KAN Core]
 ```
 
-The system employs a modular design pattern with three main components:
+---
 
-1. A callback handler for monitoring model outputs and calculating performance metrics
-2. The core MathEnsembleSolver class that supports both sequential and parallel operation
-3. A meta-ensemble layer that dynamically selects the optimal strategy based on problem characteristics[^1]
+## Core Modules and Components
 
-### Core Solver Implementation
+### adv_resolver_math
 
-The foundation of the system is the MathEnsembleSolver class, which handles model initialization, problem-solving logic, symbolic validation, and benchmarking:
+- **math_ensemble_langchain_ollama.py**: Main ensemble solver. Integrates multiple LLMs via LangChain and Ollama, supports sequential/parallel/meta-ensemble modes, symbolic validation, and benchmarking.
+- **math_ensemble_adv_ms_hackaton.py**: Implements agent-based ensemble with voting, discussion, and solution refinement. Designed for hackathon and research scenarios.
+- **ensemble_iterations/**: Contains advanced solvers (e.g., RStarMathSolver) implementing symbolic/code verification, process reward, and MCTS-inspired exploration.
+- **callbacks.py**: Custom callback handlers for monitoring and logging model outputs.
+- **math_prompts.py**: Prompt templates and utilities for LLM interactions.
+- **memory.py**: In-memory and persistent storage utilities for agent collaboration.
+- **cli.py**: Command-line interface for launching and interacting with the solver.
+
+### KAN (Kolmogorov-Arnold Networks)
+
+- **SimpleSymbolicRegressionProject.py**: Demonstrates symbolic regression pipeline, including data generation, training, pruning, and symbolic extraction.
+- **KAN core**: (not shown) Implements the neural architecture for interpretable regression.
+
+### Project Guidelines and Docs
+
+- **project_guidelines/**: Contains detailed specs, agent blueprints, and architecture notes (e.g., MPSE_2_BASE.md, MPSE_AI_AGENTS.md).
+- **docs/TESTING.md**: Describes testing strategy, coverage goals, and validation criteria.
+
+---
+
+## Workflow and Usage
+
+### 1. Setup and Installation
+
+- Clone the repository and set up virtual environments for each module (adv_resolver_math, KAN).
+- Install dependencies using pip or uv.
+- Install and run Ollama for local LLM execution; pull required models (cogito:3b, gemma3, phi4-mini:latest, etc.).
+
+### 2. Running the Ensemble Solver
+
+- Launch via CLI or directly run `math_ensemble_langchain_ollama.py` for menu-driven options:
+    - Demo with sample problems
+    - Sequential/parallel/meta-ensemble benchmarks
+    - Comprehensive benchmarking and visualization
+
+- Use the agent-based solver (math_ensemble_adv_ms_hackaton.py) for advanced workflows:
+    - Multiple agents with distinct personalities
+    - Voting, discussion, and solution refinement
+    - Symbolic and code verification
+
+### 3. Symbolic Regression (KAN)
+
+- Run `SimpleSymbolicRegressionProject.py` for interpretable regression on synthetic or real datasets.
+- Visualize results and extract symbolic formulas.
+
+### 4. Collaborative and Notebook Workflows
+
+- Use `collab_training_ntbks/` for Jupyter-based experimentation and collaborative model development.
+
+---
+
+## Testing, Quality, and CI/CD
+
+- **Testing**: Comprehensive unit, integration, and boundary tests in `tests/` and `adv_resolver_math/`.
+    - 100% coverage goal for core logic, 95%+ for error handling.
+    - Automated regression tests for all mathematical transformations.
+- **Coverage**: Run with `pytest --cov=adv_resolver_math` and generate HTML reports in `htmlcov/`.
+- **CI/CD**: GitHub Actions workflow for linting (isort, black, flake8), type checking (mypy), and tests with coverage across Python 3.8-3.10.
+- **Validation**: Solutions must pass answer normalization, confidence thresholds, and error recovery criteria.
+
+---
+
+## Current Limitations and Known Issues
+
+- **Model Limitations**: Ollama models may not match the latest OpenAI/GPT-4 performance for complex symbolic reasoning.
+- **Prompt Engineering**: Some models require careful prompt formatting and system instructions for best results.
+- **Resource Usage**: Running multiple large models locally requires significant RAM/CPU.
+- **Extensibility**: While modular, some integration points (e.g., new agent types or reward models) require manual code updates.
+- **No License**: The project currently lacks an open-source license; usage is restricted.
+- **Coverage Gaps**: Edge-case error handling and some meta-ensemble logic may have less than 100% test coverage.
+
+---
+
+## Extensibility and Collaboration
+
+- **Adding Models**: New LLMs can be integrated by updating model lists and prompt templates in `adv_resolver_math`.
+- **Custom Agents**: Extend the agent class for new personalities, voting strategies, or discussion mechanisms.
+- **Symbolic Backends**: Additional symbolic math libraries (e.g., SageMath) can be integrated for broader validation.
+- **Collaboration**: Guidelines and blueprints in `project_guidelines/` support onboarding and distributed development.
+
+---
+
+## Recent Progress and Future Directions
+
+### Recent Progress
+- Migration to LangChain and Ollama for local, privacy-preserving LLM execution.
+- Implementation of meta-ensemble architecture and dynamic strategy selection.
+- Addition of symbolic and code-level verification (RStarMathSolver).
+- Expanded test coverage and CI/CD integration.
+- Improved documentation and onboarding guides.
+- Enhanced prompt engineering for best-in-class model performance.
+
+### Future Directions
+- Integration of more advanced symbolic math and CAS backends.
+- Adaptive ensembling strategies using reinforcement learning.
+- Support for distributed, multi-node execution for large-scale benchmarks.
+- Automated prompt optimization and dataset augmentation.
+- Open-sourcing with a permissive license and community contribution process.
+- Enhanced visualization and interactive dashboards for results analysis.
+
+---
+
+## Appendix: Model Specs, Prompting, and Licensing
+
+### Supported Models (Ollama)
+
+| Model         | Description                                              | License                                    | Prompting Notes                         |
+|---------------|---------------------------------------------------------|--------------------------------------------|-----------------------------------------|
+| cogito:3b     | Hybrid reasoning, coding, STEM, multilingual            | Llama 3.2 Community License                | Use system prompt for deep thinking     |
+| llama3.2      | Meta's lightweight, edge/mobile, text-only              | Llama 3 Community License                  | Standard Llama 3 instruction templates  |
+| gemma3        | Google's multimodal, text+images, 128k context          | Custom restrictive                         | Structure prompts for multimodal input  |
+| phi4-mini     | Lightweight, fast, general math and reasoning           | MIT or similar                             | Standard system prompt                  |
+| exaone-deep   | Large, deep, advanced reasoning                         | Custom/see Ollama docs                     | Standard system prompt                  |
+
+See `MODELS_INFO.md` for detailed specs and example API calls.
+
+### Prompt Engineering Examples
 
 ```python
-class MathEnsembleSolver:
-    """
-    Advanced Math Problem Solving Ensemble using LangChain with Ollama
-    for local LLM execution in both sequential and parallel modes.
-    """
-    
-    def __init__(
-        self, 
-        models: List[str] = None, 
-        mode: str = "parallel",
+# Example: cogito:3b deep reasoning prompt
+messages = [
+    {"role": "system", "content": "Enable deep thinking subroutine."},
+    {"role": "user", "content": "How many Rs are in 'Strawberry'?"}
+]
+
+# Example: Llama3.2
+prompt = "[INST] Solve for x: 2x + 3 = 7 [/INST]"
+```
+
+### Licensing Notes
+- Some models (e.g., cogito:3b, llama3.2) allow commercial use with restrictions. See individual model licenses for details.
+- The Universal Solver project itself is currently proprietary and not licensed for redistribution.
+
+---
+
+## References
+- See `project_guidelines/`, `docs/`, and in-code docstrings for further technical detail.
+- [LangChain Documentation](https://python.langchain.com/)
+- [Ollama Documentation](https://ollama.ai/)
+- [SymPy Documentation](https://docs.sympy.org/)
+
+---
+
+> _This document is auto-generated and should be updated regularly to reflect the evolving state of the Universal Solver project._
+
         temperature: float = 0.1,
         max_tokens: int = 512,
         ollama_base_url: str = "http://localhost:11434",
