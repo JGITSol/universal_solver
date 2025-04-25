@@ -80,36 +80,69 @@ def log_result_rich(solver_name, problem_type, problem, result):
         table.add_row(str(agents), str(answer), f"{confidence:.2f}")
         theme_console.print(Panel(table, title=f"Final: [bold green]{answer}[/bold green] | Confidence: [yellow]{confidence:.2f}[/yellow] | Supporting: {agents}", border_style="bold blue"))
 
-def collect_decisions(solver_name, problem_type, problem, result):
-    # Returns a list of dicts, one per agent/decision
+def collect_decisions(solver_name, problem_type, problem, result, agent_solutions=None):
+    # Returns a list of dicts, one per agent/decision, plus a consensus row if applicable
     rows = []
     if isinstance(result, dict):
+        # Standard: all agent solutions are in result['solutions']
         for sol in result.get('solutions', []):
             rows.append({
                 'solver': solver_name,
                 'problem_type': problem_type,
                 'problem': problem,
-                'agent': sol['agent_name'],
-                'answer': sol['answer'],
-                'confidence': sol['confidence'],
-                'explanation': sol['explanation'],
+                'agent': sol.get('agent_name', 'UNKNOWN'),
+                'answer': sol.get('answer'),
+                'confidence': sol.get('confidence'),
+                'explanation': sol.get('explanation'),
                 'final_answer': result.get('final_answer'),
                 'final_confidence': result.get('final_confidence'),
                 'supporting_agents': ','.join(result.get('supporting_agents', [])),
+                'row_type': 'agent',
             })
-    else:
-        # Only final voting result available
+        # Add consensus row
         rows.append({
             'solver': solver_name,
             'problem_type': problem_type,
             'problem': problem,
-            'agent': ','.join(getattr(result, 'agents_in_agreement', [])),
+            'agent': 'CONSENSUS',
+            'answer': result.get('final_answer'),
+            'confidence': result.get('final_confidence'),
+            'explanation': '',
+            'final_answer': result.get('final_answer'),
+            'final_confidence': result.get('final_confidence'),
+            'supporting_agents': ','.join(result.get('supporting_agents', [])),
+            'row_type': 'consensus',
+        })
+    else:
+        # For solvers returning only a consensus (e.g. LatentSpaceMathSolver), log all agent solutions if available
+        if agent_solutions is not None:
+            for sol in agent_solutions:
+                rows.append({
+                    'solver': solver_name,
+                    'problem_type': problem_type,
+                    'problem': problem,
+                    'agent': getattr(sol, 'agent_name', 'UNKNOWN'),
+                    'answer': getattr(sol, 'answer', None),
+                    'confidence': getattr(sol, 'confidence', None),
+                    'explanation': getattr(sol, 'explanation', ''),
+                    'final_answer': getattr(result, 'answer', None),
+                    'final_confidence': getattr(result, 'confidence', None),
+                    'supporting_agents': ','.join(getattr(result, 'agents_in_agreement', [])),
+                    'row_type': 'agent',
+                })
+        # Always add consensus row
+        rows.append({
+            'solver': solver_name,
+            'problem_type': problem_type,
+            'problem': problem,
+            'agent': 'CONSENSUS',
             'answer': getattr(result, 'answer', None),
             'confidence': getattr(result, 'confidence', None),
             'explanation': '',
             'final_answer': getattr(result, 'answer', None),
             'final_confidence': getattr(result, 'confidence', None),
             'supporting_agents': ','.join(getattr(result, 'agents_in_agreement', [])),
+            'row_type': 'consensus',
         })
     return rows
 
@@ -125,13 +158,14 @@ if __name__ == "__main__":
     for problem_type, problem in test_problems:
         for solver_name, solver in solvers:
             try:
+                agent_solutions = None
                 if solver_name == "RStarMathSolver":
                     result = solver.solve(problem)
                 else:
-                    solutions = [solver.get_solution(agent, problem) for agent in agents]
-                    result = solver.vote_on_solutions(solutions)
+                    agent_solutions = [solver.get_solution(agent, problem) for agent in agents]
+                    result = solver.vote_on_solutions(agent_solutions)
                 log_result_rich(solver_name, problem_type, problem, result)
-                all_rows.extend(collect_decisions(solver_name, problem_type, problem, result))
+                all_rows.extend(collect_decisions(solver_name, problem_type, problem, result, agent_solutions=agent_solutions))
             except Exception as e:
                 theme_console.print(f"[bold red][ERROR][/bold red] {solver_name} failed on {problem_type}: {e}")
     if all_rows:
