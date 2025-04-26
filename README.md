@@ -5,24 +5,30 @@
 [![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-NONE-lightgrey.svg)](#license)
 
+
 ---
 
 Universal Solver is a modular, extensible platform for advanced mathematical problem solving, symbolic regression, and AI-driven research workflows. It integrates state-of-the-art models, ensemble methods, and collaborative tools to accelerate research and innovation.
 
----
 
 ## Features
-- **Advanced Math Ensemble Solver**: Combines LangChain, Ollama, SymPy, and more for powerful symbolic math and regression.
-- **Symbolic Regression (KAN)**: Kolmogorov-Arnold Networks for interpretable regression.
-- **Collaborative Notebooks**: Jupyter notebooks for collaborative model training.
+
+- **Advanced Math Ensemble Solver**: Combines LangChain, Ollama, OpenRouter, Google Gemini, SymPy, and more for powerful symbolic math and regression.
+- **SOTA Model Integration**: Benchmark with OpenRouter (Llama 3.1 Nemotron Ultra, Llama 4 Maverick, MAI DS R1), Google Gemini (2.5 Flash, 2.0 Flash-Lite), and local Ollama models.
+- **Industry-Standard Math Benchmarking**: Supports MATH, GSM8K, MathQA, ASDiv, SVAMP, AQUA-RAT, MiniF2F, and more via HuggingFace Datasets.
+- **CLI & Colab/Cloud Ready**: Run large-scale benchmarks via CLI or Colab/Jupyter notebook, with export to Excel/Parquet and cloud upload (GCP, Azure, Kaggle).
+- **Collaborative Notebooks**: Jupyter/Colab notebooks for collaborative model training and benchmarking.
 - **Extensible Architecture**: Easily add models, solvers, and workflows.
 - **Modern Python Tooling**: Linting, formatting, type-checking, and full test coverage.
 
 ## Project Structure
 
 ```text
-├── adv_resolver_math/         # Advanced math ensemble solver (LangChain, Ollama, SymPy, etc.)
+├── adv_resolver_math/         # Advanced math ensemble solver (LangChain, Ollama, OpenRouter, Gemini, SymPy, etc.)
 ├── KAN/                      # Symbolic regression with KAN (Kolmogorov-Arnold Networks)
+├── benchmark_datasets.py      # Loader for all standard math benchmarks (MATH, GSM8K, MathQA, etc.)
+├── benchmark_cli.py           # CLI for running solver benchmarks on datasets
+├── benchmark_showcase_colab.ipynb # Colab/cloud notebook for benchmarking and sharing
 ├── collab_training_ntbks/     # Collaborative model training notebooks
 ├── docs/                     # Documentation, guides, and testing
 ├── model/                    # Model state, configs, and history
@@ -56,20 +62,34 @@ venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-## Installation (Editable Mode)
-From the project root:
-```sh
-pip install -e .
+### 3. Configure API Keys
+Create a `.env` file in the project root with:
+```
+OPENROUTER_API_KEY=...
+GEMINI_API_KEY=...
 ```
 
 ## Usage
-After installation, you can use the main CLI:
+
+### Benchmarking CLI
+Run a benchmark on any supported dataset:
 ```sh
-usolve --help
+python benchmark_cli.py --dataset gsm8k --sample-size 20 --out-dir showcase_results
 ```
-Or import modules in your Python code:
+
+### Colab/Cloud Notebook
+Upload and run `benchmark_showcase_colab.ipynb` in Google Colab, Kaggle, or Jupyter. Select dataset, sample size, and run all solvers. Example code for uploading results to GCP, Azure, or Kaggle included.
+
+### Python API
+Import and use solvers, datasets, and benchmarking in your own code:
 ```python
-from adv_resolver_math import math_ensemble_adv_ms_hackaton
+from benchmark_datasets import load_benchmark_dataset, get_problem_and_answer
+from showcase_advanced_math import agents, solvers
+
+ds = load_benchmark_dataset("gsm8k", sample_size=5)
+for ex in ds:
+    problem, answer = get_problem_and_answer(ex, "gsm8k")
+    # ... run solvers ...
 ```
 
 ## Testing & Coverage
