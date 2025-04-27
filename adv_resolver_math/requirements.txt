@@ -28,6 +28,10 @@ asyncio>=3.4.3
 # Type hints
 typing-extensions>=4.8.0
 
+# G-LLaVA dependencies
+requests>=2.28.0
+pillow>=9.0.0
+
 
 # For development and testing
 pytest>=7.4.0
