@@ -1,11 +1,5 @@
 # Universal Solver
 
-[![Build Status](https://github.com/<your-org>/universal_solver/actions/workflows/ci.yml/badge.svg)](https://github.com/<your-org>/universal_solver/actions)
-[![Coverage Status](https://codecov.io/gh/<your-org>/universal_solver/branch/main/graph/badge.svg)](https://codecov.io/gh/<your-org>/universal_solver)
-[![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/downloads/)
-[![License](https://img.shields.io/badge/license-NONE-lightgrey.svg)](#license)
-
-
 ---
 
 Universal Solver is a modular, extensible platform for advanced mathematical problem solving, symbolic regression, and AI-driven research workflows. It integrates state-of-the-art models, ensemble methods, and collaborative tools to accelerate research and innovation.
@@ -175,4 +169,3 @@ MIT
 - LangChain, Ollama, SymPy, KAN, and all open-source contributors.
 
 ---
-For hackathon entry: This repository is organized for rapid onboarding, modular development, and reproducible research. Happy hacking!
