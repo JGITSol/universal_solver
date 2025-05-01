@@ -16,8 +16,17 @@ class SymbolicRegressionPipeline:
 
     def run(self, steps=500):
         x_train, y_train = self.generate_kepler_data()
-        self.kan.train(x_train, y_train, steps=steps)
-        symbolic_formula = self.kan.to_symbolic()
+        x_test = torch.linspace(0.3, 30, 100).reshape(-1, 1)
+        y_test = torch.sqrt(x_test**3)
+        dataset = {
+            'train_input': x_train,
+            'train_label': y_train,
+            'test_input': x_test,
+            'test_label': y_test
+        }
+        self.kan.fit(dataset, steps=steps)
+        self.kan.auto_symbolic()
+        symbolic_formula, variables = self.kan.symbolic_formula()
         x_test = torch.linspace(0.3, 30, 100).reshape(-1, 1)
         y_test = torch.sqrt(x_test**3)
         y_pred = self.kan(x_test)

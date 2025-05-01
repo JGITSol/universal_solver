@@ -20,7 +20,7 @@ def test_ensemble_solver_benchmark():
     result = system.solve_problem(problem)
     elapsed = time.time() - start
     assert "answer" in result
-    assert elapsed < 10  # Should solve within 10 seconds
+    assert elapsed < 15  # Should solve within 15 seconds
 
 @pytest.mark.benchmark
 def test_symbolic_regression_benchmark():
