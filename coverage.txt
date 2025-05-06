@@ -1,0 +1,83 @@
+============================= test session starts =============================
+platform win32 -- Python 3.11.3, pytest-8.3.5, pluggy-1.5.0
+rootdir: D:\REPOS\universal_solver
+configfile: pytest.ini
+testpaths: tests
+plugins: anyio-4.9.0, langsmith-0.3.29, cov-6.1.1, typeguard-4.4.2
+collected 36 items
+
+tests\test_clean_code_benchmarks.py ..                                   [  5%]
+tests\test_clean_code_mock.py .                                          [  8%]
+tests\test_cli.py .                                                      [ 11%]
+tests\test_enhanced_solver.py ..                                         [ 16%]
+tests\test_ensemble_skest_search.py ..                                   [ 22%]
+tests\test_latent_reasoning.py ...                                       [ 30%]
+tests\test_latent_space_solver.py .                                      [ 33%]
+tests\test_math_ensemble.py ..                                           [ 38%]
+tests\test_math_ensemble_complete.py ..                                  [ 44%]
+tests\test_memory_manager.py .                                           [ 47%]
+tests\test_memory_sharing_solver.py ..                                   [ 52%]
+tests\test_proof_assistant_interface.py ...                              [ 61%]
+tests\test_rstar_math_solver.py .........                                [ 86%]
+tests\test_symbolic_engine.py ...                                        [ 94%]
+tests\test_universal_math_solver.py ..                                   [100%]
+
+============================== warnings summary ===============================
+tests\test_clean_code_benchmarks.py:12
+  D:\REPOS\universal_solver\tests\test_clean_code_benchmarks.py:12: PytestUnknownMarkWarning: Unknown pytest.mark.benchmark - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.benchmark
+
+tests\test_clean_code_benchmarks.py:25
+  D:\REPOS\universal_solver\tests\test_clean_code_benchmarks.py:25: PytestUnknownMarkWarning: Unknown pytest.mark.benchmark - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.benchmark
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=============================== tests coverage ================================
+_______________ coverage: platform win32, python 3.11.3-final-0 _______________
+
+Name                                                               Stmts   Miss  Cover   Missing
+------------------------------------------------------------------------------------------------
+KAN\SimpleSymbolicRegressionProject.py                                32     32     0%   2-49
+adv_resolver_math\__init__.py                                          0      0   100%
+adv_resolver_math\api_clients.py                                      48     29    40%   22-33, 42-58, 62-78
+adv_resolver_math\callbacks.py                                        36     36     0%   3-60
+adv_resolver_math\cli.py                                              31      7    77%   32-53
+adv_resolver_math\ensemble_iterations\__init__.py                      0      0   100%
+adv_resolver_math\ensemble_iterations\enhanced_solver.py              40      4    90%   43-45, 72
+adv_resolver_math\ensemble_iterations\latent_space_solver.py          30     13    57%   6-7, 9-11, 13, 17-19, 21-24
+adv_resolver_math\ensemble_iterations\memory_sharing_solver.py        33      0   100%
+adv_resolver_math\ensemble_iterations\rstar_math_solver.py           121      3    98%   55-56, 110
+adv_resolver_math\ensemble_iterations\run_all_iteration_tests.py      20     20     0%   1-30
+adv_resolver_math\ensemble_skest_search.py                            35      0   100%
+adv_resolver_math\gllava_solver.py                                    26     26     0%   6-83
+adv_resolver_math\latent_reasoning.py                                 14      1    93%   21
+adv_resolver_math\math_ensemble_adv_ms_hackaton.py                   239     67    72%   52-53, 76, 83, 103, 118-120, 137-147, 156, 165, 173, 206, 214, 223, 244, 248, 250, 254, 273-286, 293-316, 327-328, 378, 387-388, 406-409, 455-495
+adv_resolver_math\math_ensemble_langchain_ollama.py                  447    447     0%   2-909
+adv_resolver_math\math_prompts.py                                      8      8     0%   5-38
+adv_resolver_math\memory.py                                           21      2    90%   14-15
+adv_resolver_math\proof_assistant_interface.py                         8      0   100%
+adv_resolver_math\solver_registry.py                                   4      4     0%   6-20
+adv_resolver_math\symbolic_engine.py                                  51      0   100%
+adv_resolver_math\test_math_ensemble.py                               52     52     0%   1-128
+adv_resolver_math\test_math_ensemble_complete.py                     170    170     0%   1-317
+adv_resolver_math\universal_math_solver.py                            24      0   100%
+tests\__init__.py                                                      0      0   100%
+tests\test_clean_code_benchmarks.py                                   29      0   100%
+tests\test_clean_code_mock.py                                         41      0   100%
+tests\test_cli.py                                                     13      0   100%
+tests\test_enhanced_solver.py                                         18      0   100%
+tests\test_ensemble_skest_search.py                                   19      0   100%
+tests\test_latent_reasoning.py                                        19      0   100%
+tests\test_latent_space_solver.py                                     13      0   100%
+tests\test_math_ensemble.py                                           18      0   100%
+tests\test_math_ensemble_complete.py                                  16      0   100%
+tests\test_memory_manager.py                                          16      0   100%
+tests\test_memory_sharing_solver.py                                   22      0   100%
+tests\test_proof_assistant_interface.py                               12      0   100%
+tests\test_rstar_math_solver.py                                       63      0   100%
+tests\test_symbolic_engine.py                                         17      0   100%
+tests\test_universal_math_solver.py                                   15      0   100%
+------------------------------------------------------------------------------------------------
+TOTAL                                                               1821    921    49%
+Coverage HTML written to dir htmlcov
+================= 36 passed, 2 warnings in 205.62s (0:03:25) ==================

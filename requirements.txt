@@ -1,0 +1,3 @@
+# Core dependencies for Universal Solver
+customtkinter
+# (other requirements should already be present, e.g. numpy, sympy, torch, sentence-transformers, transformers, pandas, rich, etc.)

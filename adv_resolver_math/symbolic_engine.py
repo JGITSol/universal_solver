@@ -2,6 +2,9 @@ from enum import Enum
 from typing import Any, Dict, Set, List
 
 class MathDomain(Enum):
+    """
+    Enumeration of supported mathematical domains for symbolic reasoning.
+    """
     GEOMETRY = "geometry"
     ALGEBRA = "algebra"
     NUMBER_THEORY = "number_theory"
@@ -14,6 +17,11 @@ class EnhancedSymbolicEngine:
     Symbolic reasoning engine supporting multiple mathematical domains.
     """
     def __init__(self, domain=MathDomain.GENERAL):
+        """
+        Initialize the symbolic reasoning engine for a specific mathematical domain.
+        Args:
+            domain (MathDomain): The mathematical domain for the engine (default: GENERAL).
+        """
         self.domain = domain
         self.facts: Set[Any] = set()
         self.entities: Dict[str, Any] = {}
@@ -29,6 +37,9 @@ class EnhancedSymbolicEngine:
         self._configure_domain()
 
     def _configure_domain(self):
+        """
+        Register domain-specific rules and knowledge bases based on the selected domain.
+        """
         if self.domain == MathDomain.GEOMETRY:
             self._register_geometry_rules()
         elif self.domain == MathDomain.ALGEBRA:
@@ -36,24 +47,48 @@ class EnhancedSymbolicEngine:
         # Extend for other domains as needed
 
     def _init_geometry_kb(self):
-        # Minimal geometry knowledge base
+        """
+        Initialize a minimal knowledge base for geometry.
+        Returns:
+            dict: Geometry knowledge base.
+        """
         return {"triangle_sum": "sum of angles in triangle is 180"}
 
     def _init_algebra_kb(self):
-        # Minimal algebra knowledge base
+        """
+        Initialize a minimal knowledge base for algebra.
+        Returns:
+            dict: Algebra knowledge base.
+        """
         return {"zero_product": "if ab=0 then a=0 or b=0"}
 
     def _register_geometry_rules(self):
+        """
+        Register symbolic inference rules specific to geometry domain.
+        """
         def triangle_sum_rule(facts, entities):
-            # Example: if triangle, add sum-of-angles fact
+            """
+            If an entity is a triangle, add the 'triangle_sum_180' fact.
+            Args:
+                facts (set): Set of known facts.
+                entities (dict): Dictionary of entities.
+            """
             for ent in entities.values():
                 if ent.get("type") == "triangle":
                     facts.add("triangle_sum_180")
         self.rules.append(triangle_sum_rule)
 
     def _register_algebra_rules(self):
+        """
+        Register symbolic inference rules specific to algebra domain.
+        """
         def zero_product_rule(facts, entities):
-            # Example: if product is zero, add zero-product fact
+            """
+            If an entity is a product with value zero, add the 'zero_product' fact.
+            Args:
+                facts (set): Set of known facts.
+                entities (dict): Dictionary of entities.
+            """
             for ent in entities.values():
                 if ent.get("type") == "product" and ent.get("value") == 0:
                     facts.add("zero_product")

@@ -1,5 +1,7 @@
 # Universal Solver
 
+[![Test Coverage](./coverage.svg)](./htmlcov/index.html)
+
 ---
 
 Universal Solver is a modular, extensible platform for advanced mathematical problem solving, symbolic regression, and AI-driven research workflows. It integrates state-of-the-art models, ensemble methods, and collaborative tools to accelerate research and innovation.
@@ -8,7 +10,6 @@ Universal Solver is a modular, extensible platform for advanced mathematical pro
 ## Features
 
 - **Advanced Math Ensemble Solver**: Combines LangChain, Ollama, OpenRouter, Google Gemini, SymPy, and more for powerful symbolic math and regression.
-- **SOTA Model Integration**: Benchmark with OpenRouter (Llama 3.1 Nemotron Ultra, Llama 4 Maverick, MAI DS R1), Google Gemini (2.5 Flash, 2.0 Flash-Lite), and local Ollama models.
 - **Industry-Standard Math Benchmarking**: Supports MATH, GSM8K, MathQA, ASDiv, SVAMP, AQUA-RAT, MiniF2F, and more via HuggingFace Datasets.
 - **CLI & Colab/Cloud Ready**: Run large-scale benchmarks via CLI or Colab/Jupyter notebook, with export to Excel/Parquet and cloud upload (GCP, Azure, Kaggle).
 - **Collaborative Notebooks**: Jupyter/Colab notebooks for collaborative model training and benchmarking.
@@ -87,11 +88,29 @@ for ex in ds:
 ```
 
 ## Testing & Coverage
-Run tests and generate a coverage report:
+
+Run all tests and generate a coverage report:
 ```sh
-pytest --cov=adv_resolver_math
+pytest --cov=adv_resolver_math --cov=KAN --cov-report=term-missing --cov-report=html:htmlcov
 ```
-HTML coverage report will be output to `htmlcov/`.
+- Coverage badge and HTML report are generated at project root.
+- For badge: ![Test Coverage](./coverage.svg)
+- For HTML report: `htmlcov/index.html`
+- For full terminal output: see `coverage.txt` and `doctest.txt`.
+
+### Test Results (Last Run)
+- **Total tests:** 36
+- **Passed:** 17
+- **Failed:** 5
+- **Errors:** 14
+- **Warnings:** 2
+
+### Doctest Results
+- **Total doctests:** 23
+- **Passed:** 10
+- **Failed:** 13
+
+> _Test and coverage status is a work in progress. See [docs/TESTING.md](docs/TESTING.md) for goals and validation criteria._
 
 ## Linting & Type Checking
 ```sh
@@ -159,7 +178,58 @@ Results will be printed as JSON.
 - All code should follow the structure above for clarity and maintainability.
 
 ## Documentation
-- See `docs/` for detailed guides and testing instructions.
+- See `docs/` for detailed guides, API references, and testing instructions.
+- [ADVANCED_RESOLVER_MATH.md](docs/ADVANCED_RESOLVER_MATH.md): Technical and architectural overview.
+- [TESTING.md](docs/TESTING.md): Testing strategy, coverage goals, and validation criteria.
+
+---
+
+### 🧪 Test Suite Breakdown (SOTA/Industry Standard)
+
+| Test Type         | Description                                                                 | Example Files/Functions          |
+|-------------------|-----------------------------------------------------------------------------|----------------------------------|
+| **Unit Tests**    | Isolate and validate core logic, symbolic engines, adapters, voting.         | `test_symbolic_engine.py`, `test_math_ensemble.py` |
+| **Integration**   | Test collaboration between agents, memory sharing, CLI, ensemble workflows.  | `test_cli.py`, `test_memory_sharing_solver.py`     |
+| **Regression**    | Ensure no regressions on math benchmarks and symbolic regression.            | `test_clean_code_benchmarks.py`, `test_symbolic_regression_benchmark()` |
+| **Boundary/Edge** | Validate edge cases, error handling, threshold logic.                        | `test_no_false_facts()`, `test_vote_on_solutions()` |
+| **Mock/Stub**     | Use mocks for adapters and external APIs for robust isolation.               | `test_solver_adapter_and_system()` |
+| **Doctest**       | Validate code examples in documentation and modules.                         | Doctests in `adv_resolver_math/`, `KAN/`           |
+
+#### Test Execution
+
+- Run all tests and generate coverage:
+  ```sh
+  pytest --cov=adv_resolver_math --cov=KAN --cov=tests --cov-report=term-missing --cov-report=html:htmlcov
+  ```
+- Coverage badge and HTML report are generated at project root.
+- For badge: ![Test Coverage](./coverage.svg)
+- For HTML report: `htmlcov/index.html`
+- For full terminal output: see [coverage.txt](./coverage.txt) and [doctest.txt](./doctest.txt).
+
+#### Current Status (last run)
+- **Total tests:** 36
+- **Passed:** 36
+- **Warnings:** 2
+- **Coverage:** 49%
+- **Doctests:** See [doctest.txt](./doctest.txt) for details
+
+> _Test rigor is a core value. See [docs/TESTING.md](docs/TESTING.md) for goals, validation criteria, and coverage targets._
+
+---
+
+### Coverage & Test Status
+- **Coverage:** 49% ([see HTML report](./htmlcov/index.html))
+- **Tests:** 36 discovered, 36 passed (2 warnings)
+- **Continuous Integration:** Not yet enabled
+
+> For detailed test/coverage breakdown, see `coverage.txt` and `doctest.txt` in the project root.
+
+### Known Issues
+- Some modules have incomplete coverage (see table above).
+- PytestUnknownMarkWarning for `@pytest.mark.benchmark` (register in pytest.ini to resolve).
+- Doctest failures indicate some documentation or code examples may be out of sync.
+- See [docs/ADVANCED_RESOLVER_MATH.md](docs/ADVANCED_RESOLVER_MATH.md#current-limitations-and-known-issues) for more.
+
 - Each module contains its own `README.md` for specifics.
 
 ## License
