@@ -1,15 +1,24 @@
-Universal Solver
+# Universal Solver
+
+[![Test Coverage](./coverage.svg)](./htmlcov/index.html)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+
+---
+
 Universal Solver is a modular, extensible platform for advanced mathematical problem solving, symbolic regression, and AI-driven research workflows. It integrates state-of-the-art models, ensemble methods, and collaborative tools to accelerate research and innovation in mathematics, science, and engineering.
 
-Key Features
-Advanced Math Ensemble Solver: Combines multiple state-of-the-art tools and models—including LangChain, Ollama, OpenRouter, Google Gemini, and SymPy—for symbolic mathematics and regression.
-Industry-Standard Math Benchmarking: Supports a wide range of math benchmarks (MATH, GSM8K, MathQA, ASDiv, SVAMP, AQUA-RAT, MiniF2F, and more) via HuggingFace Datasets.
-Flexible Interfaces: Provides both a Command-Line Interface (CLI) and a modern graphical user interface (GUI) built with CustomTkinter, as well as Jupyter/Colab notebook support for collaborative and cloud-based workflows.
-Extensible Architecture: Easily add new models, solvers, and research workflows with a plugin-friendly architecture.
-Comprehensive Benchmarking and Reporting: Run large-scale benchmarks, export results to Excel/Parquet, and upload to cloud storage (GCP, Azure, Kaggle).
-Modern Python Tooling: Fully type-checked, linted, and covered by automated tests. Includes development tools for formatting, linting, and static analysis.
-Project Structure
-CopyInsert
+## Key Features
+
+- **Advanced Math Ensemble Solver**: Combines multiple state-of-the-art tools and models—including LangChain, Ollama, OpenRouter, Google Gemini, and SymPy—for symbolic mathematics and regression.
+- **Industry-Standard Math Benchmarking**: Supports a wide range of math benchmarks (MATH, GSM8K, MathQA, ASDiv, SVAMP, AQUA-RAT, MiniF2F, and more) via HuggingFace Datasets.
+- **Flexible Interfaces**: Provides both a Command-Line Interface (CLI) and a modern graphical user interface (GUI) built with CustomTkinter, as well as Jupyter/Colab notebook support for collaborative and cloud-based workflows.
+- **Extensible Architecture**: Easily add new models, solvers, and research workflows with a plugin-friendly architecture.
+- **Comprehensive Benchmarking and Reporting**: Run large-scale benchmarks, export results to Excel/Parquet, and upload to cloud storage (GCP, Azure, Kaggle).
+- **Modern Python Tooling**: Fully type-checked, linted, and covered by automated tests. Includes development tools for formatting, linting, and static analysis.
+
+## Project Structure
+
+```text
 adv_resolver_math/         # Advanced math ensemble solver (LangChain, Ollama, OpenRouter, Gemini, SymPy, etc.)
 KAN/                      # Symbolic regression with Kolmogorov-Arnold Networks (KAN)
 benchmark_datasets.py     # Loader for standard math benchmarks
@@ -22,7 +31,9 @@ project_guidelines/       # Hackathon and project guidelines, agent specs
 math_cache/               # Exported math data and cache
 tests/                    # Test suite (pytest compatible)
 universal_solver_gui.py   # Modern GUI for solver interaction
-...
+... (see [Project Overview](docs/UNIVERSAL_SOLVER_PROJECT_OVERVIEW.md))
+```
+
 Installation
 Prerequisites
 Python 3.8+
