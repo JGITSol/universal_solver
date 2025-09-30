@@ -1,7 +1,10 @@
-import os
 import json
+import os
+
 import pytest
+
 from adv_resolver_math.memory import MemoryManager
+
 
 def test_memory_manager(tmp_path):
     mem_path = tmp_path / "mem.json"
@@ -13,7 +16,7 @@ def test_memory_manager(tmp_path):
     mgr.add("problem1", result)
     # File should exist now
     assert mem_path.exists()
-    with open(mem_path, 'r') as f:
+    with open(mem_path, "r") as f:
         data = json.load(f)
     assert data == {"problem1": result}
 

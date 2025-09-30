@@ -1,13 +1,16 @@
 from typing import Any, Dict, List
+
 from clean_code.logger import get_logger
 
 logger = get_logger(__name__)
+
 
 class SolverAdapter:
     """
     Adapter to unify the interface of symbolic regression (KAN) and ensemble math solvers
     for use in the neuro-symbolic system.
     """
+
     def __init__(self, solver_instance, solver_type: str = "ensemble"):
         self.solver = solver_instance
         self.solver_type = solver_type
@@ -35,12 +38,14 @@ class SolverAdapter:
                 "answer": result.answer,
                 "confidence": result.confidence,
                 "agents_in_agreement": result.agents_in_agreement,
-                "explanation": explanations
+                "explanation": explanations,
             }
         elif self.solver_type == "symbolic_regression":
             # KAN or similar expects data, not a text problem
             if "x_train" in kwargs and "y_train" in kwargs:
-                self.solver.train(kwargs["x_train"], kwargs["y_train"], steps=kwargs.get("steps", 500))
+                self.solver.train(
+                    kwargs["x_train"], kwargs["y_train"], steps=kwargs.get("steps", 500)
+                )
                 symbolic_formula = self.solver.to_symbolic()
                 return {"formula": symbolic_formula}
             else:

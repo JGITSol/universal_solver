@@ -1,10 +1,12 @@
 from enum import Enum
-from typing import Any, Dict, Set, List
+from typing import Any, Dict, List, Set
+
 
 class MathDomain(Enum):
     """
     Enumeration of supported mathematical domains for symbolic reasoning.
     """
+
     GEOMETRY = "geometry"
     ALGEBRA = "algebra"
     NUMBER_THEORY = "number_theory"
@@ -12,10 +14,12 @@ class MathDomain(Enum):
     COMBINATORICS = "combinatorics"
     GENERAL = "general"
 
+
 class EnhancedSymbolicEngine:
     """
     Symbolic reasoning engine supporting multiple mathematical domains.
     """
+
     def __init__(self, domain=MathDomain.GENERAL):
         """
         Initialize the symbolic reasoning engine for a specific mathematical domain.
@@ -32,7 +36,7 @@ class EnhancedSymbolicEngine:
             MathDomain.NUMBER_THEORY: {},
             MathDomain.CALCULUS: {},
             MathDomain.COMBINATORICS: {},
-            MathDomain.GENERAL: {}
+            MathDomain.GENERAL: {},
         }
         self._configure_domain()
 
@@ -66,6 +70,7 @@ class EnhancedSymbolicEngine:
         """
         Register symbolic inference rules specific to geometry domain.
         """
+
         def triangle_sum_rule(facts, entities):
             """
             If an entity is a triangle, add the 'triangle_sum_180' fact.
@@ -76,12 +81,14 @@ class EnhancedSymbolicEngine:
             for ent in entities.values():
                 if ent.get("type") == "triangle":
                     facts.add("triangle_sum_180")
+
         self.rules.append(triangle_sum_rule)
 
     def _register_algebra_rules(self):
         """
         Register symbolic inference rules specific to algebra domain.
         """
+
         def zero_product_rule(facts, entities):
             """
             If an entity is a product with value zero, add the 'zero_product' fact.
@@ -92,6 +99,7 @@ class EnhancedSymbolicEngine:
             for ent in entities.values():
                 if ent.get("type") == "product" and ent.get("value") == 0:
                     facts.add("zero_product")
+
         self.rules.append(zero_product_rule)
 
     def add_entity(self, name: str, entity: Dict[str, Any]):

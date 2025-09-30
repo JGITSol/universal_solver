@@ -1,6 +1,7 @@
-import sys
-import subprocess
 import json
+import subprocess
+import sys
+
 
 def test_cli_rstar_returns_json():
     cmd = [sys.executable, "-m", "adv_resolver_math.cli", "rstar", "x = 2 + 2"]

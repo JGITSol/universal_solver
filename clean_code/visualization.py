@@ -1,13 +1,17 @@
-import matplotlib.pyplot as plt
 from typing import Any, Dict, List, Optional
+
+import matplotlib.pyplot as plt
+
 from clean_code.logger import get_logger
 
 logger = get_logger(__name__)
+
 
 class MathVisualizer:
     """
     Advanced visualization system for mathematical proofs, constructions, and symbolic regression.
     """
+
     def __init__(self, figsize=(10, 8), style="modern", interactive=True):
         self.figsize = figsize
         self.style = style
@@ -29,7 +33,7 @@ class MathVisualizer:
                 "circles": "#e74c3c",
                 "angles": "#9b59b6",
                 "highlight": "#f1c40f",
-                "background": "#ecf0f1"
+                "background": "#ecf0f1",
             }
         elif style == "classic":
             return {
@@ -38,7 +42,7 @@ class MathVisualizer:
                 "circles": "red",
                 "angles": "green",
                 "highlight": "orange",
-                "background": "white"
+                "background": "white",
             }
         else:
             return {
@@ -47,10 +51,12 @@ class MathVisualizer:
                 "circles": "#777777",
                 "angles": "#999999",
                 "highlight": "#000000",
-                "background": "#ffffff"
+                "background": "#ffffff",
             }
 
-    def visualize_geometry_problem(self, formalization: Dict[str, Any], highlight_steps: Optional[List[Any]] = None):
+    def visualize_geometry_problem(
+        self, formalization: Dict[str, Any], highlight_steps: Optional[List[Any]] = None
+    ):
         """
         Visualize a geometric problem from formalized data.
         """
@@ -60,22 +66,28 @@ class MathVisualizer:
         plt.show()
         logger.info("Geometry problem visualization completed")
         plt.savefig("geometry_problem_visualization.png")
-        logger.info("Geometry problem visualization saved to geometry_problem_visualization.png")
+        logger.info(
+            "Geometry problem visualization saved to geometry_problem_visualization.png"
+        )
         return fig
 
-    def visualize_symbolic_regression(self, x_train, y_train, x_test, y_test, y_pred, formula: str):
+    def visualize_symbolic_regression(
+        self, x_train, y_train, x_test, y_test, y_pred, formula: str
+    ):
         plt.figure(figsize=self.figsize)
-        plt.scatter(x_train, y_train, alpha=0.3, label='Training data')
-        plt.plot(x_test, y_test, 'r-', label='Ground truth')
-        plt.plot(x_test, y_pred, 'g--', label='Model prediction')
+        plt.scatter(x_train, y_train, alpha=0.3, label="Training data")
+        plt.plot(x_test, y_test, "r-", label="Ground truth")
+        plt.plot(x_test, y_pred, "g--", label="Model prediction")
         plt.legend()
-        plt.xlabel('Input')
-        plt.ylabel('Output')
-        plt.title(f'Discovered formula: {formula}')
+        plt.xlabel("Input")
+        plt.ylabel("Output")
+        plt.title(f"Discovered formula: {formula}")
         logger.info(f"Visualizing discovered formula: {formula}")
         plt.show()
         plt.savefig("symbolic_regression_visualization.png")
-        logger.info("Symbolic regression visualization saved to symbolic_regression_visualization.png")
+        logger.info(
+            "Symbolic regression visualization saved to symbolic_regression_visualization.png"
+        )
 
     def visualize(self, problem, result):
         # Visualize based on problem type

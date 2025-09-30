@@ -3,8 +3,10 @@ benchmark_datasets.py
 
 Industry-standard math datasets loader for benchmarking advanced math solvers (April 2025).
 """
-from datasets import load_dataset
+
 import random
+
+from datasets import load_dataset
 
 # Supported datasets and their configs
 BENCHMARK_DATASETS = {
@@ -17,9 +19,11 @@ BENCHMARK_DATASETS = {
     "minif2f": {"hf_id": "minif2f", "splits": ["test"]},
 }
 
+
 def list_benchmark_datasets():
     """Return a list of available math benchmark datasets."""
     return list(BENCHMARK_DATASETS.keys())
+
 
 def load_benchmark_dataset(name, split="test", sample_size=None, seed=42):
     """Load a benchmark dataset (optionally sample a subset)."""
@@ -30,6 +34,7 @@ def load_benchmark_dataset(name, split="test", sample_size=None, seed=42):
     if sample_size is not None:
         ds = ds.shuffle(seed=seed).select(range(sample_size))
     return ds
+
 
 def get_problem_and_answer(example, dataset_name):
     """Standardize access to problem and answer fields for each dataset."""
@@ -49,6 +54,7 @@ def get_problem_and_answer(example, dataset_name):
         return example["problem"], example["solution"]
     else:
         raise ValueError(f"Unsupported dataset: {dataset_name}")
+
 
 if __name__ == "__main__":
     # Example: list datasets and sample 3 problems from each

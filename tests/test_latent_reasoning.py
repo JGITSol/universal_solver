@@ -1,6 +1,8 @@
-import pytest
 import numpy as np
+import pytest
+
 from adv_resolver_math.latent_reasoning import LatentReasoningModule
+
 
 def test_embedding_shape():
     module = LatentReasoningModule(embedding_dim=8)
@@ -8,11 +10,13 @@ def test_embedding_shape():
     assert isinstance(vec, np.ndarray)
     assert vec.shape == (8,)
 
+
 def test_similarity_self():
     module = LatentReasoningModule(embedding_dim=8)
     vec = module.embed_object("a+b")
     sim = module.similarity(vec, vec)
     assert abs(sim - 1.0) < 1e-6
+
 
 def test_similarity_different():
     module = LatentReasoningModule(embedding_dim=8)

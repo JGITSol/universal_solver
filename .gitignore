@@ -1,6 +1,44 @@
 # Python
 __pycache__/
 *.py[cod]
+*$py.class
+
+# Virtual environments
+adv_res_venv/
+adv_resolver_math/adv_res_venv/
+KAN/venv/
+venv/
+env/
+.venv/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Pytest
+.pytest_cache/
+
+# Coverage
+htmlcov/
+coverage.*
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDEs
+.vscode/
+.idea/
+
+# mypy
+.mypy_cache/
+
+# macOS
+.DS_Store
+# Python
+__pycache__/
+*.py[cod]
 *.so
 .Python
 build/

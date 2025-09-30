@@ -33,6 +33,7 @@ MODEL_PROMPTS = {
 # Default prompt to use if model not found in the dictionary
 DEFAULT_MATH_PROMPT = BASE_MATH_PROMPT
 
+
 def get_math_prompt(model_name):
     """Get the appropriate math prompt for a given model."""
     return MODEL_PROMPTS.get(model_name.lower(), DEFAULT_MATH_PROMPT)

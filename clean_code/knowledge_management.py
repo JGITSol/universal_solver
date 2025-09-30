@@ -1,14 +1,17 @@
-from typing import Any, Dict, List
 import json
 import os
+from typing import Any, Dict, List
+
 from clean_code.logger import get_logger
 
 logger = get_logger(__name__)
+
 
 class KnowledgeManagementSystem:
     """
     Persistent knowledge management for storing problems, solutions, and heuristics.
     """
+
     def __init__(self, db_path="knowledge_db.json"):
         self.db_path = db_path
         self.knowledge = self._load_knowledge()
@@ -35,6 +38,8 @@ class KnowledgeManagementSystem:
 
     def query(self, query_str: str) -> List[Dict[str, Any]]:
         logger.info(f"Querying knowledge for query string: {query_str}")
-        results = [e for e in self.knowledge if query_str.lower() in e["problem"].lower()]
+        results = [
+            e for e in self.knowledge if query_str.lower() in e["problem"].lower()
+        ]
         logger.info(f"Found {len(results)} results for query string: {query_str}")
         return results

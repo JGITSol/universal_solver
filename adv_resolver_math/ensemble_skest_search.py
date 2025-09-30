@@ -1,13 +1,20 @@
 import threading
-from typing import Callable, Any, Set, List
 import time
+from typing import Any, Callable, List, Set
+
 
 class EnhancedSKESTSearch:
     """
     Parallel ensemble search with shared knowledge synchronization.
     Each thread runs its own symbolic engine, periodically sharing facts.
     """
-    def __init__(self, engine_factory: Callable[[], Any], num_threads: int = 2, max_iterations: int = 5):
+
+    def __init__(
+        self,
+        engine_factory: Callable[[], Any],
+        num_threads: int = 2,
+        max_iterations: int = 5,
+    ):
         self.engine_factory = engine_factory
         self.num_threads = num_threads
         self.max_iterations = max_iterations
@@ -34,7 +41,10 @@ class EnhancedSKESTSearch:
             self.finished.set()
 
     def run_search(self):
-        self.threads = [threading.Thread(target=self._search_thread, args=(i,)) for i in range(self.num_threads)]
+        self.threads = [
+            threading.Thread(target=self._search_thread, args=(i,))
+            for i in range(self.num_threads)
+        ]
         for t in self.threads:
             t.start()
         self.finished.wait(timeout=2)

@@ -1,10 +1,18 @@
 import re
-import numpy as np
-from typing import List, Any
 from dataclasses import dataclass, field
-from adv_resolver_math.math_ensemble_adv_ms_hackaton import MathProblemSolver, Agent, Solution, VotingResult
+from typing import Any, List
+
+import numpy as np
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
+
+from adv_resolver_math.math_ensemble_adv_ms_hackaton import (
+    Agent,
+    MathProblemSolver,
+    Solution,
+    VotingResult,
+)
+
 
 @dataclass
 class EnhancedMathSolver(MathProblemSolver):
@@ -12,14 +20,17 @@ class EnhancedMathSolver(MathProblemSolver):
     Advanced solver with semantic clustering, performance-weighted voting, and modular SOTA features.
     Inherits from MathProblemSolver as the working base.
     """
+
     embedding_dim: int = field(default=384)
 
     def __post_init__(self):
         super().__post_init__()
         # Semantic embedder for answer similarity
-        self.embedder = SentenceTransformer('all-MiniLM-L6-v2')
+        self.embedder = SentenceTransformer("all-MiniLM-L6-v2")
         # Track agent performance (dummy init, extend as needed)
-        self.performance_stats = {agent.name: {"correct": 1, "total": 1} for agent in self.agents}
+        self.performance_stats = {
+            agent.name: {"correct": 1, "total": 1} for agent in self.agents
+        }
 
     def _calculate_semantic_similarity(self, text1: str, text2: str) -> float:
         """Calculate semantic similarity using sentence embeddings."""
@@ -35,10 +46,12 @@ class EnhancedMathSolver(MathProblemSolver):
         for solution in solutions:
             matched = False
             for group in solution_groups:
-                avg_sim = np.mean([
-                    self._calculate_semantic_similarity(solution.answer, s.answer)
-                    for s in group
-                ])
+                avg_sim = np.mean(
+                    [
+                        self._calculate_semantic_similarity(solution.answer, s.answer)
+                        for s in group
+                    ]
+                )
                 if avg_sim > 0.85:
                     group.append(solution)
                     matched = True
@@ -50,8 +63,11 @@ class EnhancedMathSolver(MathProblemSolver):
         group_scores = []
         for group in solution_groups:
             score = sum(
-                s.confidence * (self.performance_stats[s.agent_name]["correct"] /
-                                max(1, self.performance_stats[s.agent_name]["total"]))
+                s.confidence
+                * (
+                    self.performance_stats[s.agent_name]["correct"]
+                    / max(1, self.performance_stats[s.agent_name]["total"])
+                )
                 for s in group
             )
             group_scores.append((score, group))
@@ -61,9 +77,13 @@ class EnhancedMathSolver(MathProblemSolver):
 
         # Prepare result
         return VotingResult(
-            answer=self._select_representative_answer(best_group) if best_group else "No consensus",
-            confidence=len(best_group)/len(self.agents) if self.agents else 0.0,
-            agents_in_agreement=[s.agent_name for s in best_group]
+            answer=(
+                self._select_representative_answer(best_group)
+                if best_group
+                else "No consensus"
+            ),
+            confidence=len(best_group) / len(self.agents) if self.agents else 0.0,
+            agents_in_agreement=[s.agent_name for s in best_group],
         )
 
     def _select_representative_answer(self, group: List[Solution]) -> str:

@@ -1,11 +1,13 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 setup(
     name="universal_solver",
     version="0.1.0",
     description="Modular, extensible platform for advanced mathematical problem solving, symbolic regression, and AI-driven research workflows.",
     author="Your Name",
-    packages=find_packages(exclude=["tests*", "htmlcov*", "docs*", "project_guidelines*"]),
+    packages=find_packages(
+        exclude=["tests*", "htmlcov*", "docs*", "project_guidelines*"]
+    ),
     install_requires=[
         "numpy==1.26.4",
         "sympy==1.13.1",
@@ -38,7 +40,7 @@ setup(
         "typing-extensions==4.13.1",
         "pillow==9.0.0",
         "tenacity>=8.1.0,<9.0.0",
-        "transformers==4.50.0"
+        "transformers==4.50.0",
     ],
     extras_require={
         "dev": [
@@ -46,15 +48,11 @@ setup(
             "black>=23.10.0",
             "isort>=5.12.0",
             "mypy>=1.6.0",
-            "flake8>=6.1.0"
+            "flake8>=6.1.0",
         ]
     },
     python_requires=">=3.8",
-    entry_points={
-        "console_scripts": [
-            "usolve=adv_resolver_math.cli:main"
-        ]
-    },
+    entry_points={"console_scripts": ["usolve=adv_resolver_math.cli:main"]},
     include_package_data=True,
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -62,4 +60,3 @@ setup(
         "Operating System :: OS Independent",
     ],
 )
-

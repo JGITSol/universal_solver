@@ -1,19 +1,20 @@
+from typing import Any, Dict
+
 import numpy as np
 import sympy as sp
-from typing import Any, Dict
+
 from clean_code.logger import get_logger
 
 logger = get_logger(__name__)
+
 
 class ToolIntegrationManager:
     """
     Manages integration with external mathematical tools and libraries.
     """
+
     def __init__(self):
-        self.tools = {
-            "sympy": self.sympy_tool,
-            "numpy": self.numpy_tool
-        }
+        self.tools = {"sympy": self.sympy_tool, "numpy": self.numpy_tool}
         logger.info("ToolIntegrationManager initialized.")
 
     def call_tool(self, tool_name: str, function_name: str, *args, **kwargs) -> Any:

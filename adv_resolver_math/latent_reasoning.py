@@ -1,9 +1,11 @@
 import numpy as np
 
+
 class LatentReasoningModule:
     """
     Minimal latent reasoning module for embedding mathematical objects and computing similarity.
     """
+
     def __init__(self, embedding_dim=8):
         self.embedding_dim = embedding_dim
 

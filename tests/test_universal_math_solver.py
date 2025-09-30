@@ -1,6 +1,8 @@
 import pytest
-from adv_resolver_math.universal_math_solver import UniversalMathSolver
+
 from adv_resolver_math.symbolic_engine import MathDomain
+from adv_resolver_math.universal_math_solver import UniversalMathSolver
+
 
 def test_solve_algebra_zero_product():
     solver = UniversalMathSolver(domain=MathDomain.ALGEBRA)
@@ -8,6 +10,7 @@ def test_solve_algebra_zero_product():
     result = solver.solve("If ab=0, what can you say about a or b?", entity=entity)
     assert "zero_product" in result["facts"]
     assert "zero_product" in result["ensemble_facts"]
+
 
 def test_solve_geometry_triangle_sum():
     solver = UniversalMathSolver(domain=MathDomain.GEOMETRY)

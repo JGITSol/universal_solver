@@ -4,10 +4,14 @@ benchmark_geometry.py
 Benchmark script for evaluating G-LLaVA-based solvers on geometry datasets.
 Provides functions to run benchmarks, evaluate solutions, and output results.
 """
-from adv_resolver_math.solver_registry import register_solvers
-from benchmark_datasets import load_benchmark_dataset, get_problem_and_answer
-import pandas as pd
+
 import os
+
+import pandas as pd
+
+from adv_resolver_math.solver_registry import register_solvers
+from benchmark_datasets import get_problem_and_answer, load_benchmark_dataset
+
 
 def evaluate_solution(solution, answer):
     """
@@ -21,7 +25,10 @@ def evaluate_solution(solution, answer):
     """
     return answer.strip() in solution
 
-def run_geometry_benchmark(dataset_name="geoqa", sample_size=20, out_dir="geometry_results"):
+
+def run_geometry_benchmark(
+    dataset_name="geoqa", sample_size=20, out_dir="geometry_results"
+):
     """
     Run a benchmark on geometry datasets using the G-LLaVA solver.
 
@@ -38,19 +45,18 @@ def run_geometry_benchmark(dataset_name="geoqa", sample_size=20, out_dir="geomet
     results = []
     for ex in ds:
         problem, answer = get_problem_and_answer(ex, dataset_name)
-        problem_input = {
-            "text": problem,
-            "image_path": ex.get("image_path")
-        }
+        problem_input = {"text": problem, "image_path": ex.get("image_path")}
         solution = gllava_solver.solve(problem_input)
         is_correct = evaluate_solution(solution["solution"], answer)
-        results.append({
-            "problem": problem,
-            "expected_answer": answer,
-            "solution": solution["solution"],
-            "is_correct": is_correct,
-            "model_used": solution["model_used"]
-        })
+        results.append(
+            {
+                "problem": problem,
+                "expected_answer": answer,
+                "solution": solution["solution"],
+                "is_correct": is_correct,
+                "model_used": solution["model_used"],
+            }
+        )
     os.makedirs(out_dir, exist_ok=True)
     results_df = pd.DataFrame(results)
     results_df.to_csv(f"{out_dir}/{dataset_name}_gllava_results.csv", index=False)
