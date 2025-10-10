@@ -30,7 +30,7 @@ class MathSolvingCallbackHandler(BaseCallbackHandler):
         self.tokens += 1
 
         # Track step markers for analysis
-        if "Step" in token or "\item" in token:
+        if "Step" in token or "\\item" in token:
             self.step_markers += 1
 
         # Track equation generation
@@ -42,7 +42,10 @@ class MathSolvingCallbackHandler(BaseCallbackHandler):
             elapsed = time.time() - self.start_time
             tokens_per_sec = self.tokens / max(0.1, elapsed)
             self.console.print(
-                f"[dim]{self.model_name}: {self.tokens} tokens generated ({tokens_per_sec:.1f} tokens/sec)[/dim]",
+                (
+                    f"[dim]{self.model_name}: {self.tokens} tokens generated "
+                    f"({tokens_per_sec:.1f} tokens/sec)[/dim]"
+                ),
                 end="\r",
             )
 
@@ -51,10 +54,18 @@ class MathSolvingCallbackHandler(BaseCallbackHandler):
         tokens_per_sec = self.tokens / max(0.1, elapsed)
 
         self.console.print(
-            f"[dim]{self.model_name} completed in {elapsed:.2f} seconds, generated {self.tokens} tokens ({tokens_per_sec:.1f} tokens/sec)[/dim]"
+            (
+                f"[dim]{self.model_name} completed in {elapsed:.2f} seconds, "
+                f"generated {self.tokens} tokens "
+                f"({tokens_per_sec:.1f} tokens/sec)[/dim]"
+            )
         )
         self.console.print(
-            f"[dim]Solution contains {self.step_markers} step markers and {self.equation_count} equations[/dim]"
+            (
+                "[dim]Solution contains "
+                f"{self.step_markers} step markers and {self.equation_count} "
+                "equations[/dim]"
+            )
         )
 
     def on_llm_error(self, error: Exception, **kwargs):

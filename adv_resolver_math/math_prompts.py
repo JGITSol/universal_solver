@@ -12,7 +12,8 @@ Please follow these guidelines:
 2. Explain your reasoning at each step
 3. Use mathematical notation where appropriate
 4. Verify your answer
-5. Present your final answer in a \\boxed{{answer}} format or as **Final Answer**: [your answer]
+5. Present your final answer in a \\boxed{{answer}} format
+    or as **Final Answer**: [your answer]
 
 Solution:
 """

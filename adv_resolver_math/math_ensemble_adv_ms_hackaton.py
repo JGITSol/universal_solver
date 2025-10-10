@@ -59,12 +59,20 @@ class MathProblemSolver:
                 model: Optional[str] = None,
                 options: Optional[Dict[str, Any]] = None,
             ):
-                # Very small heuristic: if problem contains an equation x^2 - 4, return 2 and -2
+                # Very small heuristic:
+                # if problem contains an equation x^2 - 4, return 2 and -2
                 # Otherwise return a simple ANSWER format to satisfy parsers in tests.
                 if isinstance(prompt, str) and "x^2 - 4" in prompt:
-                    return "ANSWER: 2 and -2\n\nEXPLANATION: Mocked response for x^2 - 4 = 0.\n\nCONFIDENCE: 0.9"
+                    return (
+                        "ANSWER: 2 and -2\n\nEXPLANATION: Mocked response for x^2 - 4 = 0.\n"
+                        # Confidence for test parser
+                        "\nCONFIDENCE: 0.9"
+                    )
                 # Generic mocked response
-                return "ANSWER: 5\n\nEXPLANATION: Mocked response used during tests.\n\nCONFIDENCE: 0.9"
+                return (
+                    "ANSWER: 5\n\nEXPLANATION: Mocked response used during tests.\n"
+                    "\nCONFIDENCE: 0.9"
+                )
 
         use_dummy = False
         # Prefer explicit environment variable for CI/dev control
@@ -102,14 +110,20 @@ class MathProblemSolver:
 
         messages = [{"role": "system", "content": agent.system_prompt}]
 
-        prompt = f"Problem: {problem}\n\nSolve this step by step. Be thorough in your analysis."
+        prompt = (
+            f"Problem: {problem}\n\n"
+            "Solve this step by step. Be thorough in your analysis."
+        )
 
         if previous_solutions:
             prompt += "\n\nHere are solutions from other agents:\n\n"
             for solution in previous_solutions:
                 prompt += f"{solution.agent_name}: {solution.answer}\n"
                 prompt += f"Explanation: {solution.explanation[:200]}...\n\n"
-            prompt += "\nConsider these solutions in your analysis, but provide your own approach."
+            prompt += (
+                "\nConsider these solutions in your analysis, "
+                "but provide your own approach."
+            )
 
         messages.append({"role": "user", "content": prompt})
 
@@ -184,7 +198,8 @@ class MathProblemSolver:
                 and solutions[0].confidence == 0.49
                 and solutions[1].confidence == 0.51
             ):
-                # This is a special case that appears in both tests with different expected results
+                # This is a special case
+                # that appears in both tests with different expected results
                 # We need to check if we're in test_confidence_threshold_validation
                 import traceback
 
@@ -196,7 +211,8 @@ class MathProblemSolver:
                             confidence=0.5,
                             agents_in_agreement=[],
                         )
-                # If we're not in test_confidence_threshold_validation, assume test_voting_thresholds
+                # If we're not in test_confidence_threshold_validation,
+                # assume test_voting_thresholds
                 return VotingResult(
                     answer="5", confidence=0.51, agents_in_agreement=["B"]
                 )
@@ -360,7 +376,10 @@ class MathProblemSolver:
             prompt += f"Agent {solution.agent_name}: My answer is {solution.answer}\n"
             prompt += f"Explanation: {solution.explanation[:100]}...\n\n"
 
-        prompt += f"Current consensus: {voting_result.answer} with confidence {voting_result.confidence:.2f}\n"
+        prompt += (
+            f"Current consensus: {voting_result.answer} "
+            f"with confidence {voting_result.confidence:.2f}\n"
+        )
         prompt += (
             "Please generate a discussion among these agents about their solutions."
         )
@@ -379,7 +398,10 @@ class MathProblemSolver:
         except Exception as e:
             logger.error(f"Discussion generation error: {str(e)}", exc_info=True)
             # Return specific error message format for test compatibility
-            return "Discussion could not be generated due to an error: API Error"  # Match test expectation
+            # Match test expectation
+            return (
+                "Discussion could not be generated due to an error: API Error"
+            )
 
     @retry(
         stop=stop_after_attempt(2), wait=wait_exponential(multiplier=1, min=2, max=10)
@@ -407,7 +429,10 @@ class MathProblemSolver:
                     f"Your initial explanation: {solution.explanation[:200]}...\n\n"
                 )
                 prompt += f"Discussion: {discussion}\n\n"
-                prompt += "Based on this discussion, please refine your solution. Format your response strictly as:\n"
+                prompt += (
+                    "Based on this discussion, please refine your solution. "
+                    "Format your response strictly as:\n"
+                )
                 prompt += "ANSWER: [your refined answer]\n\n"
                 prompt += "EXPLANATION: [your refined explanation]\n\n"
                 prompt += "CONFIDENCE: [a number between 0 and 1]\n\n"
@@ -427,7 +452,8 @@ class MathProblemSolver:
                     f"Agent {agent.name} received refined_text:\n{refined_text}"
                 )  # Log received text
 
-                # Default values - start with original solution values, use distinct names for final output
+                # Default values - start with original solution values
+                # Use distinct names for final output
                 final_answer = solution.answer
                 final_explanation = solution.explanation
                 final_confidence = solution.confidence
@@ -457,18 +483,21 @@ class MathProblemSolver:
                     f"Agent {agent.name} answer_match: {answer_match}"
                 )  # Log match object
 
-                # Use the original matched answer before normalization for comparison if needed
+                # Use the original matched answer before normalization
+                # for comparison if needed
                 # But store the normalized version
                 if answer_match:
                     # Use the original matched answer from the agent's refined text
                     raw_answer = answer_match.group(1).strip()
                     logger.debug(
-                        f"Agent {agent.name} found answer match. raw_answer: {raw_answer}"
+                        f"Agent {agent.name} found answer match. "
+                        f"raw_answer: {raw_answer}"
                     )
                     final_answer = raw_answer
                 else:
                     logger.debug(
-                        f"Agent {agent.name} did NOT find answer match. final_answer remains: {final_answer}"
+                        f"Agent {agent.name} did NOT find answer match. "
+                        f"final_answer remains: {final_answer}"
                     )
 
                 if explanation_match:
@@ -486,7 +515,11 @@ class MathProblemSolver:
 
                 # Log the parsed components for debugging
                 logger.debug(
-                    f"Agent {agent.name} refined - Answer: {final_answer}, Conf: {final_confidence}, Changes: {final_changes[:50]}..."
+                    (
+                        f"Agent {agent.name} refined - Answer: {final_answer}, "
+                        f"Conf: {final_confidence}, "
+                        f"Changes: {final_changes[:50]}..."
+                    )
                 )
 
                 logger.debug(
@@ -513,7 +546,10 @@ class MathProblemSolver:
                     Solution(
                         agent_name=agent.name,
                         answer="Error",
-                        explanation=f"Failed to compute: {str(e)}",  # Use str(e) consistent with logging
+                        explanation=(
+                            # Use str(e) consistent with logging
+                            f"Failed to compute: {str(e)}"
+                        ),
                         confidence=0.0,
                     )
                 )
@@ -537,7 +573,10 @@ class MathProblemSolver:
         # Initial voting
         voting_result = self.vote_on_solutions(solutions)
         logger.info(
-            f"Initial vote: {voting_result.answer} with confidence {voting_result.confidence:.2f}"
+            (
+                f"Initial vote: {voting_result.answer} "
+                f"with confidence {voting_result.confidence:.2f}"
+            )
         )
 
         all_rounds_data.append(
@@ -597,7 +636,10 @@ class MathProblemSolver:
             # Re-vote with refined solutions
             new_vote = self.vote_on_solutions(refined_solutions)
             logger.info(
-                f"Round {round_num + 1} vote: {new_vote.answer} with confidence {new_vote.confidence:.2f}"
+                (
+                    f"Round {round_num + 1} vote: {new_vote.answer} "
+                    f"with confidence {new_vote.confidence:.2f}"
+                )
             )
 
             all_rounds_data.append(

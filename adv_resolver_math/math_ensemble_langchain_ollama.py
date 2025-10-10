@@ -36,7 +36,8 @@ Please follow these guidelines:
 2. Explain your reasoning at each step
 3. Use mathematical notation where appropriate
 4. Verify your answer
-5. Present your final answer in a \\boxed{{answer}} format or as **Final Answer**: [your answer]
+5. Present your final answer in a \boxed{{answer}} format
+or as **Final Answer**: [your answer]
 
 Solution:
 """
@@ -91,7 +92,6 @@ class MathEnsembleSolver:
         verbose: bool = True,
     ):
         self.console = Console()
-        self.models = models or ["cogito:3b", "gemma3:1b", "phi4-mini:latest"]
         self.mode = mode.lower()
         self.temperature = temperature
         self.max_tokens = max_tokens
@@ -372,7 +372,10 @@ class MathEnsembleSolver:
                 max(scores.items(), key=lambda x: x[1])[0] if scores else None
             ),
         }
-
+                                (
+                                    "[yellow]Warning: Ollama service may not be running "
+                                    "correctly[/yellow]"
+                                )
         if self.use_cache:
             self.cache[cache_key] = result
             self._save_cache()
@@ -415,7 +418,8 @@ class MathEnsembleSolver:
             for model_name, chain in self.model_chains.items()
         ]
 
-        # Run all tasks concurrently
+                            task, 
+                            completed=1,
         results = await asyncio.gather(*tasks)
 
         # Process results
@@ -432,7 +436,10 @@ class MathEnsembleSolver:
                 max(scores.items(), key=lambda x: x[1])[0] if scores else None
             ),
         }
-
+                        (
+                            f"\n[bold]Meta-Ensemble Benchmark Summary: "
+                            f"{benchmark_result['dataset']}[/bold]"
+                        )
         if self.use_cache:
             self.cache[cache_key] = result
             self._save_cache()
@@ -560,7 +567,10 @@ class MathEnsembleSolver:
                         )
                     ):
                         correct_counts[model] += 1
-
+                            (
+                                "State-of-the-Art Math Problem Solving using Local LLMs "
+                                "via Ollama and LangChain"
+                            ),
                 progress.update(
                     task,
                     advance=1,
@@ -956,18 +966,21 @@ if __name__ == "__main__":
     console.print(
         Panel.fit(
             "[bold magenta]Math Ensemble Solver[/bold magenta]\n"
-            "State-of-the-Art Math Problem Solving using Local LLMs via Ollama and LangChain",
+            "State-of-the-Art Math Problem Solving using Local LLMs via Ollama "
+            "and LangChain",
             border_style="green",
         )
     )
 
     # Sample math problems for testing
     problems = [
-        "If 2x + 5 = 15, what is the value of x?",
-        "A rectangle has a length of 10 cm and a width of 5 cm. What is its area?",
-        "If the probability of an event is 0.3, what is the probability that it does not occur?",
-        "Solve the quadratic equation: x^2 - 5x + 6 = 0",
-        "A train travels at 60 km/h. How far will it travel in 2.5 hours?",
+    "If 2x + 5 = 15, what is the value of x?",
+    "A rectangle has a length of 10 cm and a width of 5 cm. "
+    "What is its area?",
+    "If the probability of an event is 0.3, what is the probability "
+    "that it does not occur?",
+    "Solve the quadratic equation: x^2 - 5x + 6 = 0",
+    "A train travels at 60 km/h. How far will it travel in 2.5 hours?",
     ]
 
     # Ask user which demo to run

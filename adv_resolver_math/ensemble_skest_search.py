@@ -33,9 +33,7 @@ class EnhancedSKESTSearch:
             engine.infer(1)  # One inference step per iteration
             # Share new facts with ensemble
             with self.shared_knowledge_lock:
-                before = set(self.shared_knowledge)
                 self.shared_knowledge.update(engine.get_facts())
-                after = self.shared_knowledge
             time.sleep(0.01)  # Simulate work, avoid busy-wait
         if thread_id == 0:
             self.finished.set()

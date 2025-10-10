@@ -6,11 +6,15 @@ Usage (from repo root):
 This ensures that when working inside KAN, the `uv` package installed in
 adv_res_venv is used instead of any system Python.
 """
+
 import os
 import subprocess
 import sys
 
-VENV_PY = os.path.join(os.path.dirname(__file__), "..", "adv_res_venv", "Scripts", "python.exe")
+VENV_PY = os.path.join(
+    os.path.dirname(__file__), "..", "adv_res_venv", "Scripts", "python.exe"
+)
+
 
 def main():
     # Resolve absolute path
@@ -26,6 +30,7 @@ def main():
         sys.exit(proc.returncode)
     except KeyboardInterrupt:
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

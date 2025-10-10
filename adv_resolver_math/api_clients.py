@@ -67,7 +67,8 @@ def openrouter_chat(model, messages, temperature=0.1, max_tokens=512):
 # --- Google Gemini API Client ---
 def gemini_chat(model, messages, temperature=0.1, max_tokens=512):
     gemini_limiter.acquire()
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_API_KEY}"
+    base_url = "https://generativelanguage.googleapis.com/v1beta/models"
+    url = f"{base_url}/{model}:generateContent?key={GEMINI_API_KEY}"
     headers = {"Content-Type": "application/json"}
     # Gemini expects a different format
     content = "\n".join([m["content"] for m in messages if m["role"] == "user"])

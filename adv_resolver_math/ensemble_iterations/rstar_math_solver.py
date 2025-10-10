@@ -1,17 +1,14 @@
 from concurrent.futures import ThreadPoolExecutor
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 import sympy
 from sklearn.metrics.pairwise import cosine_similarity
 
-from adv_resolver_math.ensemble_iterations.latent_space_solver import (
-    LatentSpaceMathSolver,
-    Solution,
-    VotingResult,
-)
-from adv_resolver_math.math_ensemble_adv_ms_hackaton import Agent, logger
-
+from adv_resolver_math.ensemble_iterations.latent_space_solver import LatentSpaceMathSolver
+from adv_resolver_math.math_ensemble_adv_ms_hackaton import Solution, VotingResult, Agent
+from clean_code.logger import get_logger
+logger = get_logger("rstar_math_solver")
 
 class RStarMathSolver(LatentSpaceMathSolver):
     """
@@ -23,7 +20,7 @@ class RStarMathSolver(LatentSpaceMathSolver):
         *args,
         mcts_rounds: int = 3,
         evolution_rounds: int = 2,
-        reward_weights: Dict[str, float] = None,
+        reward_weights: Optional[Dict[str, float]] = None,
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
@@ -47,7 +44,7 @@ class RStarMathSolver(LatentSpaceMathSolver):
             expr = sympy.parse_expr(step.split("=")[-1].split("→")[-1].strip())
             simplified = sympy.simplify(expr)
             return simplified.equals(sympy.true)
-        except:
+        except Exception:
             return False
 
     def code_verification(self, problem: str, solution: Solution) -> float:
@@ -62,14 +59,14 @@ class RStarMathSolver(LatentSpaceMathSolver):
                     )
             results = [f.result() for f in futures]
             verification_score = np.mean(results) if results else 0.0
-        return verification_score
+        return float(verification_score)
 
     def verify_single_step(self, problem: str, step: str) -> float:
         try:
             symbolic_valid = self.symbolic_verification(step)
             # Optionally execute code for more robust check (not implemented for safety)
             return 1.0 if symbolic_valid else 0.5
-        except:
+        except Exception:
             return 0.0
 
     def calculate_process_reward(self, solution: Solution) -> float:
@@ -87,7 +84,7 @@ class RStarMathSolver(LatentSpaceMathSolver):
         embeddings = [self.embedder.encode(step) for step in steps]
         scores = []
         for i in range(1, len(embeddings)):
-            scores.append(cosine_similarity([embeddings[i - 1]], [embeddings[i]])[0][0])
+            scores.append(cosine_similarity(np.array([embeddings[i - 1]]), np.array([embeddings[i]]))[0][0])
         return float(np.mean(scores)) if scores else 0.0
 
     def analyze_conceptual_consistency(self, solution: Solution) -> float:
@@ -121,7 +118,7 @@ class RStarMathSolver(LatentSpaceMathSolver):
             if score > best_score:
                 best_score = score
                 best_sol = sol
-        return best_sol
+        return best_sol if best_sol is not None else Solution("", "", "", 0.0)
 
     def refine_with_feedback(self, solution: Solution, problem: str) -> Solution:
         """Generate a refined solution using process feedback."""
@@ -180,7 +177,7 @@ class RStarMathSolver(LatentSpaceMathSolver):
         # Stage 4: Final vote
         final = self.verification_aware_vote(survivors)
         # Prepare result
-        result = {"solutions": []}
+        result = {"solutions": [], "final_answer": [], "final_confidence": [], "supporting_agents": []}
         for sol in survivors:
             result["solutions"].append(
                 {
@@ -192,7 +189,7 @@ class RStarMathSolver(LatentSpaceMathSolver):
                     "process_reward": sol.process_reward,
                 }
             )
-        result["final_answer"] = final.answer
-        result["final_confidence"] = final.confidence
-        result["supporting_agents"] = final.agents_in_agreement
+        result["final_answer"].append(final.answer)
+        result["final_confidence"].append(final.confidence)
+        result["supporting_agents"].extend(final.agents_in_agreement)
         return result

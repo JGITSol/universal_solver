@@ -1,13 +1,11 @@
-import re
 from dataclasses import dataclass, field
-from typing import Any, List
+from typing import List
 
 import numpy as np
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
 from adv_resolver_math.math_ensemble_adv_ms_hackaton import (
-    Agent,
     MathProblemSolver,
     Solution,
     VotingResult,
@@ -17,8 +15,9 @@ from adv_resolver_math.math_ensemble_adv_ms_hackaton import (
 @dataclass
 class EnhancedMathSolver(MathProblemSolver):
     """
-    Advanced solver with semantic clustering, performance-weighted voting, and modular SOTA features.
-    Inherits from MathProblemSolver as the working base.
+    Advanced solver with semantic clustering, performance-weighted voting,
+    and modular SOTA features. Inherits from MathProblemSolver as the
+    working base.
     """
 
     embedding_dim: int = field(default=384)

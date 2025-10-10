@@ -1,10 +1,5 @@
 import numpy as np
-
-from adv_resolver_math.ensemble_iterations.memory_sharing_solver import (
-    MemorySharingMathSolver,
-    Solution,
-    VotingResult,
-)
+from adv_resolver_math.ensemble_iterations.memory_sharing_solver import MemorySharingMathSolver  # noqa: E501
 
 
 class LatentReasoner:
@@ -26,6 +21,10 @@ class CoconutAgent:
         self.agent = agent
         self.latent_reasoner = LatentReasoner(base_model)
         self.reasoning_depth = reasoning_depth
+
+    def embed_problem(self, problem):
+        # Dummy embedding method for demonstration
+        return self.latent_reasoner.base_model.encode(problem)
 
     def solve(self, problem):
         latent_state = self.embed_problem(problem)
