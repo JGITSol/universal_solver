@@ -5,3 +5,4 @@ mypy>=1.6.0
 flake8>=6.1.0
 pre-commit>=3.4.0
 pytest-cov
+ruff>=0.6.0

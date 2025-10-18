@@ -1,10 +1,18 @@
+from pathlib import Path
+
 from setuptools import find_packages, setup
+
+
+def read_version() -> str:
+    version_file = Path(__file__).resolve().parent / "VERSION"
+    return version_file.read_text(encoding="utf-8").strip()
+
 
 setup(
     name="universal_solver",
-    version="0.1.0",
+    version=read_version(),
     description="Modular, extensible platform for advanced mathematical problem solving, symbolic regression, and AI-driven research workflows.",
-    author="Your Name",
+    author="Universal Solver contributors",
     packages=find_packages(
         exclude=["tests*", "htmlcov*", "docs*", "project_guidelines*"]
     ),

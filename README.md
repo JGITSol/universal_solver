@@ -1,3 +1,5 @@
+<!-- markdownlint-disable -->
+
 # Universal Solver
 
 [![Test Coverage](./coverage.svg)](./htmlcov/index.html)
@@ -34,80 +36,109 @@ universal_solver_gui.py   # Modern GUI for solver interaction
 ... (see [Project Overview](docs/UNIVERSAL_SOLVER_PROJECT_OVERVIEW.md))
 ```
 
-Installation
-Prerequisites
-Python 3.8+
-pip
-Clone and Prepare
-sh
-CopyInsert
+## Installation
+
+### Prerequisites
+
+- Python 3.10+
+- `pip`
+- (Optional) `make` for development shortcuts
+
+### Clone and Prepare
+
+```bash
 git clone <repo-url> universal_solver
 cd universal_solver
-Setup Environments
-For Advanced Math Ensemble
-sh
-CopyInsert
+```
+
+### Environment Setup
+
+Create isolated environments for the two primary subsystems to keep dependency trees manageable.
+
+#### Advanced Math Ensemble
+
+```powershell
 cd adv_resolver_math
 python -m venv adv_res_venv
-adv_res_venv\Scripts\activate  # On Windows
+adv_res_venv\Scripts\activate
 pip install -r requirements.txt
-For KAN Module
-sh
-CopyInsert
-cd ../KAN
+```
+
+#### KAN Module
+
+```powershell
+cd ..\KAN
 python -m venv venv
 venv\Scripts\activate
 pip install -r requirements.txt
-Install Core Dependencies
-Alternatively, install all core dependencies in the project root:
+```
 
-sh
-CopyInsert
+#### Project Root (optional unified environment)
+
+```powershell
 pip install -r requirements.txt
-Or for development:
-
-sh
-CopyInsert
+# or for contributors
 pip install -e .[dev]
-Configuration
-Create a .env file in the project root to store API keys and configuration parameters for external services (e.g., OpenAI, Gemini, etc.).
+```
 
-Usage
-CLI
-Run benchmarks or solve problems via the command line:
+### Configuration
 
-sh
-CopyInsert
+Create a `.env` file in the project root with API keys and configuration values for external services (OpenRouter, Gemini, WolframAlpha, etc.). See `docs/API_*` guides for details.
+
+## Usage
+
+### CLI
+
+```powershell
 python benchmark_cli.py --help
-GUI
-Launch the graphical interface:
+```
 
-sh
-CopyInsert
+### GUI
+
+```powershell
 python universal_solver_gui.py
-Jupyter/Colab
-Use collaborative notebooks in collab_training_ntbks/ or benchmark_showcase_colab.ipynb for cloud-based workflows.
+```
 
-Example Workflow
-Select a math problem or benchmark dataset.
-Choose solver options (ensemble, symbolic, neural, etc.).
-Process the problem and review intermediate logs and results.
-Use voting and debugging panels (GUI) for transparency and inspection.
-Export results and reports as needed.
-Testing & Quality Assurance
-Run all tests:
-sh
-CopyInsert
+### Jupyter / Colab
+
+Launch notebooks from `collab_training_ntbks/` or `benchmark_showcase_colab.ipynb` to explore workflows in an interactive environment.
+
+### Example Workflow
+
+1. Select a math problem or benchmark dataset.
+2. Choose solver options (ensemble, symbolic, neural, etc.).
+3. Execute the pipeline and inspect intermediary reasoning / verification logs.
+4. Review consensus voting results and diagnostics.
+5. Export reports as HTML, CSV, or Parquet for downstream analysis.
+
+## Testing & Quality Assurance
+
+```powershell
 pytest --cov=adv_resolver_math --cov-report=html
-Code is formatted with black, linted with flake8, and type-checked with mypy.
-Dependencies
-Core dependencies include:
+```
 
-numpy, sympy, torch, scikit-learn, sentence-transformers, transformers, pandas, matplotlib, seaborn, plotly, langchain, pykan, customtkinter, rich, requests, and more.
-Full list in requirements.txt and setup.py.
+- Formatting: `black .`
+- Linting: `ruff check .`
+- Type checking: `mypy .`
 
-License
-MIT License
+## Versioning & Releases
+
+- Project version is tracked in the top-level `VERSION` file and exposed via `universal_solver.__version__`.
+- Update the version file following [Semantic Versioning](https://semver.org/) for every release candidate.
+- See `docs/RELEASE.md` for branching, tagging, and publishing instructions.
+
+## Dependencies
+
+Key dependencies include `numpy`, `sympy`, `torch`, `scikit-learn`, `sentence-transformers`, `transformers`, `langchain`, `pykan`, `customtkinter`, `rich`, and more. Refer to `requirements.txt` and `setup.py` for the exhaustive list.
+
+## License
+
+Distributed under the MIT License.
+
+
+
+
+
 
 
 

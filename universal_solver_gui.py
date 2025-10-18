@@ -1,8 +1,11 @@
-import os
 import tkinter as tk
-from tkinter import messagebox, ttk
+from tkinter import ttk
+import threading
 
 import customtkinter as ctk
+
+# Types for clarity when manipulating solver collections
+from typing import Any, Dict, List, Tuple
 
 # Ensure CTk theme
 ctk.set_appearance_mode("System")
@@ -151,19 +154,23 @@ class UniversalSolverGUI(ctk.CTk):
         # Dynamic solver options
         from showcase_advanced_math import solvers
 
-        self.solver_names = [name for name, _ in solvers]
-        self.solver_map = {name: solver for name, solver in solvers}
+        solver_pairs: List[Tuple[str, Any]] = list(solvers)
+        self.solver_names: List[str] = [name for name, _ in solver_pairs]
+        self.solver_map: Dict[str, Any] = {name: solver for name, solver in solver_pairs}
         ctk.CTkLabel(
             left_panel, text="Processing Option", font=("Segoe UI", 13, "bold")
         ).pack(anchor="w", pady=(4, 0), padx=8)
-        self.selected_solver = tk.StringVar(value=self.solver_names[0])
+        default_solver = self.solver_names[0] if self.solver_names else ""
+        self.selected_solver = tk.StringVar(value=default_solver)
         solver_dropdown = ctk.CTkOptionMenu(
             left_panel, variable=self.selected_solver, values=self.solver_names
         )
         solver_dropdown.pack(fill="x", padx=12, pady=(0, 8))
         # Optionally, show details of selected solver
         self.solver_detail_label = ctk.CTkLabel(
-            left_panel, text=f"Selected: {self.solver_names[0]}", font=("Segoe UI", 11)
+            left_panel,
+            text=f"Selected: {default_solver}" if default_solver else "No solvers registered",
+            font=("Segoe UI", 11),
         )
         self.solver_detail_label.pack(anchor="w", padx=16, pady=(0, 6))
 
@@ -207,39 +214,53 @@ class UniversalSolverGUI(ctk.CTk):
         )
         self.input_entry.pack(side="left", fill="x", expand=True, padx=(0, 8))
         # Button group
-        send_btn = ctk.CTkButton(
+        self.send_btn = ctk.CTkButton(
             input_frame, text="Send Message", command=self.on_send, fg_color="#2a8cff"
         )
-        send_btn.pack(side="left", padx=(0, 4))
-        hard_stop_btn = ctk.CTkButton(
+        self.send_btn.pack(side="left", padx=(0, 4))
+        self.hard_stop_btn = ctk.CTkButton(
             input_frame,
             text="Hard Stop (Scram)",
             command=self.on_hard_stop,
             fg_color="#ff3c3c",
         )
-        hard_stop_btn.pack(side="left", padx=(0, 4))
-        soft_stop_btn = ctk.CTkButton(
+        self.hard_stop_btn.pack(side="left", padx=(0, 4))
+        self.soft_stop_btn = ctk.CTkButton(
             input_frame,
             text="Soft Stop (Summary)",
             command=self.on_soft_stop,
             fg_color="#ffd633",
             text_color="#222",
         )
-        soft_stop_btn.pack(side="left")
+        self.soft_stop_btn.pack(side="left")
+        if not self.solver_names:
+            self.send_btn.configure(state="disabled")
+            self.hard_stop_btn.configure(state="disabled")
+            self.soft_stop_btn.configure(state="disabled")
         # --- Panels ---
         self.proc_panel = ProblemProcessingPanel(center_panel)
         self.proc_panel.pack(fill="both", expand=True, pady=4)
         self.vote_panel = VotingPanel(center_panel)
         self.vote_panel.pack(fill="both", expand=True, pady=4)
+        # Right: Debugging/logs
+        right_panel = ctk.CTkFrame(self)
+        right_panel.grid(row=0, column=2, sticky="nsew", padx=8, pady=8)
+        self.debug_panel = DebuggingPanel(right_panel)
+        self.debug_panel.pack(fill="both", expand=True, pady=4)
+        # Menu bar
+        self.create_menu()
 
     def on_send(self):
         query = self.input_var.get()
         solver_name = self.selected_solver.get()
-        solver = self.solver_map[solver_name]
+        solver = self.solver_map.get(solver_name)
+        if not solver:
+            self._handle_solver_error(ValueError("No solver selected."))
+            return
         self.proc_panel.text.delete("1.0", "end")
         self.vote_panel.results.delete("1.0", "end")
-        if hasattr(self, "debug_panel"):
-            self.debug_panel.log.delete("1.0", "end")
+        self.debug_panel.log.delete("1.0", "end")
+        self._set_controls_state("disabled")
         # Confirmation message (label at top of center panel)
         if (
             hasattr(self, "confirmation_label")
@@ -262,48 +283,58 @@ class UniversalSolverGUI(ctk.CTk):
             ),
         )
         # Run in background thread to keep GUI responsive
-        import threading
-
         def run_solver():
             try:
                 # Unified interface: EnhancedMathSolver, MemorySharingMathSolver, LatentSpaceMathSolver all use get_solution/vote_on_solutions; RStarMathSolver uses solve
                 from showcase_advanced_math import agents
+                processing_output = ""
+                voting_output = ""
+                debug_output = "[Processing completed successfully]\n"
 
                 if solver_name == "RStarMathSolver":
                     result = solver.solve(query)
-                    self.proc_panel.text.insert(
-                        "end", f"[RStarMathSolver Result]\n{result}\n"
-                    )
-                    self.vote_panel.results.insert(
-                        "end",
-                        f"Final Answer: {result.get('answer', result)}\nConfidence: {result.get('confidence', '')}\n",
+                    processing_output = f"[RStarMathSolver Result]\n{result}\n"
+                    voting_output = (
+                        "Final Answer: {}\nConfidence: {}\n".format(
+                            result.get("answer", result),
+                            result.get("confidence", ""),
+                        )
                     )
                 else:
                     agent_solutions = [
                         solver.get_solution(agent, query) for agent in agents
                     ]
-                    result = solver.vote_on_solutions(agent_solutions)
-                    self.proc_panel.text.insert(
-                        "end",
-                        "\n".join(
-                            [
-                                f"{s.agent_name}: {s.answer}\n{s.explanation}\nConfidence: {s.confidence}"
-                                for s in agent_solutions
-                            ]
-                        ),
+                    processing_output = "\n".join(
+                        [
+                            (
+                                f"{s.agent_name}: {s.answer}\n{s.explanation}\n"
+                                f"Confidence: {s.confidence}"
+                            )
+                            for s in agent_solutions
+                        ]
                     )
-                    self.vote_panel.results.insert(
-                        "end",
-                        f"Final Answer: {result.answer}\nConfidence: {result.confidence}\nAgents in agreement: {', '.join(result.agents_in_agreement) if hasattr(result, 'agents_in_agreement') else ''}\n",
+                    vote_result = solver.vote_on_solutions(agent_solutions)
+                    agent_list = (
+                        ", ".join(vote_result.agents_in_agreement)
+                        if hasattr(vote_result, "agents_in_agreement")
+                        else ""
                     )
-                if hasattr(self, "debug_panel"):
-                    self.debug_panel.log.insert(
-                        "end", "[Processing completed successfully]\n"
+                    voting_output = (
+                        "Final Answer: {}\nConfidence: {}\nAgents in agreement: {}\n".format(
+                            vote_result.answer,
+                            vote_result.confidence,
+                            agent_list,
+                        )
                     )
-            except Exception as e:
-                if hasattr(self, "debug_panel"):
-                    self.debug_panel.log.insert("end", f"[ERROR] {e}\n")
-                self.proc_panel.text.insert("end", f"[ERROR] {e}\n")
+
+                self.after(
+                    0,
+                    lambda: self._handle_solver_success(
+                        processing_output, voting_output, debug_output
+                    ),
+                )
+            except Exception as exc:
+                self.after(0, lambda err=exc: self._handle_solver_error(err))
 
         threading.Thread(target=run_solver, daemon=True).start()
 
@@ -313,8 +344,7 @@ class UniversalSolverGUI(ctk.CTk):
             "end", "\n[Hard Stop initiated: Processing interrupted!]"
         )
         self.vote_panel.results.insert("end", "\n[Hard Stop: Voting interrupted!]")
-        if hasattr(self, "debug_panel"):
-            self.debug_panel.log.insert("end", "\n[Hard Stop: Debugging interrupted!]")
+        self.debug_panel.log.insert("end", "\n[Hard Stop: Debugging interrupted!]")
 
     def on_soft_stop(self):
         """Triggered when Soft Stop (Summary) is pressed. Simulate graceful stop with summary."""
@@ -324,19 +354,35 @@ class UniversalSolverGUI(ctk.CTk):
         self.vote_panel.results.insert(
             "end", "\n[Soft Stop: Step finished, summary generated.]"
         )
-        if hasattr(self, "debug_panel"):
-            self.debug_panel.log.insert(
-                "end", "\n[Soft Stop: Step finished, summary generated.]"
-            )
+        self.debug_panel.log.insert(
+            "end", "\n[Soft Stop: Step finished, summary generated.]"
+        )
 
-        # Right: Debugging/logs
-        right_panel = ctk.CTkFrame(self)
-        right_panel.grid(row=0, column=2, sticky="nsew", padx=8, pady=8)
-        # Save reference for debug panel refresh
-        self.debug_panel = DebuggingPanel(right_panel)
-        self.debug_panel.pack(fill="both", expand=True, pady=4)
-        # Menu bar
-        self.create_menu()
+    def _handle_solver_success(
+        self, processing_output: str, voting_output: str, debug_output: str
+    ) -> None:
+        """Update UI after successful solver execution."""
+        self.proc_panel.text.insert("end", processing_output)
+        self.vote_panel.results.insert("end", voting_output)
+        if debug_output:
+            self.debug_panel.log.insert("end", debug_output)
+        self._set_controls_state("normal")
+
+    def _handle_solver_error(self, error: Exception) -> None:
+        """Display solver error details to the user."""
+        message = f"[ERROR] {error}\n"
+        self.proc_panel.text.insert("end", message)
+        self.vote_panel.results.insert("end", message)
+        self.debug_panel.log.insert("end", message)
+        self._set_controls_state("normal")
+
+    def _set_controls_state(self, state: str) -> None:
+        """Enable or disable main action controls."""
+        self.send_btn.configure(state=state)
+        if state == "disabled":
+            return
+        self.hard_stop_btn.configure(state="normal")
+        self.soft_stop_btn.configure(state="normal")
 
     def create_menu(self):
         menubar = tk.Menu(self)

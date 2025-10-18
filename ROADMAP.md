@@ -10,6 +10,17 @@ Universal Solver aims to be the leading open-source platform for advanced mathem
 
 ## Roadmap Overview
 
+### Release Cadence
+
+| Quarter (Target) | Primary Focus | Key Deliverables |
+| ---------------- | ------------- | ---------------- |
+| 2025&nbsp;Q4 | Hardening the math ensemble stack | Complete CI/CD modernization, ship v0.2.0 (solver orchestration refresh, GUI stability), publish benchmarking playbook |
+| 2026&nbsp;Q1 | Distributed execution & observability | Remote inference support, structured logging pipeline, telemetry dashboards, beta Docker images |
+| 2026&nbsp;Q2 | Community release & extensibility | Plugin SDK, documentation revamp, first community hackathon, v0.3.0 release |
+| 2026&nbsp;H2 | Productization runway | Hosted demo environment, enterprise auth roadmap, scalable storage abstractions |
+
+Progress is reviewed at the end of every quarter. Items that miss their target are re-estimated during the roadmap retro and assigned to the next feasible milestone.
+
 ### Core Platform & Architecture
 
 - Modular, plug-and-play solvers and agents
