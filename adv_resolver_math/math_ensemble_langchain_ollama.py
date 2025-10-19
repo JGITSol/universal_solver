@@ -4,22 +4,18 @@ import json
 import os
 import re
 import time
-from typing import Any, Dict, List, Optional, Union
+from typing import List, Optional
 
 # For benchmarking
-import datasets
 import matplotlib.pyplot as plt
 import pandas as pd
 import sympy
-from datasets import load_dataset
+from datasets import DatasetDict, IterableDatasetDict, load_dataset
 from langchain.callbacks.base import BaseCallbackHandler
-from langchain.callbacks.manager import CallbackManager
 
 # LangChain components
 from langchain.llms import Ollama
 from langchain.prompts import PromptTemplate
-from langchain.schema.runnable import RunnablePassthrough
-from langchain_core.runnables import RunnableConfig, RunnableLambda, RunnablePassthrough
 from rich.console import Console
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TextColumn
@@ -54,6 +50,7 @@ class MathSolvingCallbackHandler(BaseCallbackHandler):
 
     def on_llm_start(self, *args, **kwargs):
         self.start_time = time.time()
+        self.tokens = 0
         self.console.print(f"[dim]{self.model_name} is thinking...[/dim]")
 
     def on_llm_new_token(self, token: str, **kwargs):
@@ -65,10 +62,14 @@ class MathSolvingCallbackHandler(BaseCallbackHandler):
             )
 
     def on_llm_end(self, *args, **kwargs):
-        elapsed = time.time() - self.start_time
+        if self.start_time is not None:
+            elapsed = time.time() - self.start_time
+        else:
+            elapsed = 0.0
         self.console.print(
             f"[dim]{self.model_name} completed in {elapsed:.2f} seconds, generated {self.tokens} tokens[/dim]"
         )
+        self.start_time = None
 
     def on_llm_error(self, error: Exception, **kwargs):
         self.console.print(f"[red]Error with {self.model_name}: {error}[/red]")
@@ -82,7 +83,7 @@ class MathEnsembleSolver:
 
     def __init__(
         self,
-        models: List[str] = None,
+        models: Optional[List[str]] = None,
         mode: str = "parallel",
         temperature: float = 0.1,
         max_tokens: int = 512,
@@ -99,6 +100,11 @@ class MathEnsembleSolver:
         self.use_cache = use_cache
         self.cache_dir = cache_dir
         self.verbose = verbose
+        self.models: List[str] = models or [
+            "llama3.1:latest",
+            "mistral:latest",
+            "phi3:medium",
+        ]
 
         # Setup environment and initialize models
         self._setup_environment()
@@ -272,7 +278,7 @@ class MathEnsembleSolver:
             try:
                 # Try alternative parsing for complex expressions
                 return str(eval(expr))
-            except:
+            except Exception:
                 return None
 
     def _score_solution(self, problem, solution):
@@ -372,10 +378,6 @@ class MathEnsembleSolver:
                 max(scores.items(), key=lambda x: x[1])[0] if scores else None
             ),
         }
-                                (
-                                    "[yellow]Warning: Ollama service may not be running "
-                                    "correctly[/yellow]"
-                                )
         if self.use_cache:
             self.cache[cache_key] = result
             self._save_cache()
@@ -417,9 +419,6 @@ class MathEnsembleSolver:
             solve_with_model(model_name, chain)
             for model_name, chain in self.model_chains.items()
         ]
-
-                            task, 
-                            completed=1,
         results = await asyncio.gather(*tasks)
 
         # Process results
@@ -436,10 +435,6 @@ class MathEnsembleSolver:
                 max(scores.items(), key=lambda x: x[1])[0] if scores else None
             ),
         }
-                        (
-                            f"\n[bold]Meta-Ensemble Benchmark Summary: "
-                            f"{benchmark_result['dataset']}[/bold]"
-                        )
         if self.use_cache:
             self.cache[cache_key] = result
             self._save_cache()
@@ -511,16 +506,36 @@ class MathEnsembleSolver:
 
         # Load the dataset
         try:
-            dataset = load_dataset(dataset_name, "main", split=split)
+            dataset_raw = load_dataset(dataset_name, "main", split=split)
         except Exception as e:
             self.console.print(f"[red]Error loading dataset: {e}[/red]")
             return {"error": str(e)}
 
-        # Limit to num_samples if specified
-        if num_samples > 0:
-            dataset = dataset.select(range(min(num_samples, len(dataset))))
+        # Handle dataset containers that include multiple splits
+        if isinstance(dataset_raw, (DatasetDict, IterableDatasetDict)):
+            try:
+                dataset_iterable = dataset_raw[split]
+            except (KeyError, StopIteration):
+                dataset_iterable = []
+            else:
+                if dataset_iterable is None:
+                    dataset_iterable = []
+        else:
+            dataset_iterable = dataset_raw
 
-        self.console.print(f"Running benchmark on {len(dataset)} problems...")
+        sampled_items = []
+        for idx, item in enumerate(dataset_iterable):
+            if num_samples > 0 and idx >= num_samples:
+                break
+            sampled_items.append(item)
+
+        if not sampled_items:
+            warning = "No samples available for benchmarking."
+            self.console.print(f"[yellow]{warning}[/yellow]")
+            return {"error": warning}
+
+        total_items = len(sampled_items)
+        self.console.print(f"Running benchmark on {total_items} problems...")
 
         results = []
         correct_counts = {model: 0 for model in self.models}
@@ -532,9 +547,9 @@ class MathEnsembleSolver:
             TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
             console=self.console,
         ) as progress:
-            task = progress.add_task("[cyan]Benchmarking...[/cyan]", total=len(dataset))
+            task = progress.add_task("[cyan]Benchmarking...[/cyan]", total=total_items)
 
-            for i, item in enumerate(dataset):
+            for i, item in enumerate(sampled_items):
                 # Extract problem and answer based on dataset format
                 if dataset_name == "gsm8k":
                     problem = item.get("question", "")
@@ -567,22 +582,18 @@ class MathEnsembleSolver:
                         )
                     ):
                         correct_counts[model] += 1
-                            (
-                                "State-of-the-Art Math Problem Solving using Local LLMs "
-                                "via Ollama and LangChain"
-                            ),
                 progress.update(
                     task,
                     advance=1,
-                    description=f"[cyan]Problem {i+1}/{len(dataset)}[/cyan]",
+                    description=f"[cyan]Problem {i+1}/{total_items}[/cyan]",
                 )
 
         # Calculate statistics
         model_accuracy = {
-            model: count / len(dataset) for model, count in correct_counts.items()
+            model: count / total_items for model, count in correct_counts.items()
         }
         avg_model_scores = {
-            model: score / len(dataset) for model, score in total_scores.items()
+            model: score / total_items for model, score in total_scores.items()
         }
 
         # Determine best model
@@ -596,7 +607,7 @@ class MathEnsembleSolver:
         benchmark_result = {
             "dataset": dataset_name,
             "split": split,
-            "num_samples": len(dataset),
+            "num_samples": total_items,
             "model_accuracy": model_accuracy,
             "avg_model_scores": avg_model_scores,
             "best_model": best_model,
@@ -855,16 +866,35 @@ class MetaMathEnsemble:
 
         # Load the dataset
         try:
-            dataset = load_dataset(dataset_name, "main", split=split)
+            dataset_raw = load_dataset(dataset_name, "main", split=split)
         except Exception as e:
             self.console.print(f"[red]Error loading dataset: {e}[/red]")
             return {"error": str(e)}
 
-        # Limit to num_samples if specified
-        if num_samples > 0:
-            dataset = dataset.select(range(min(num_samples, len(dataset))))
+        if isinstance(dataset_raw, (DatasetDict, IterableDatasetDict)):
+            try:
+                dataset_iterable = dataset_raw[split]
+            except (KeyError, StopIteration):
+                dataset_iterable = []
+            else:
+                if dataset_iterable is None:
+                    dataset_iterable = []
+        else:
+            dataset_iterable = dataset_raw
 
-        self.console.print(f"Running benchmark on {len(dataset)} problems...")
+        sampled_items = []
+        for idx, item in enumerate(dataset_iterable):
+            if num_samples > 0 and idx >= num_samples:
+                break
+            sampled_items.append(item)
+
+        if not sampled_items:
+            warning = "No samples available for benchmarking."
+            self.console.print(f"[yellow]{warning}[/yellow]")
+            return {"error": warning}
+
+        total_items = len(sampled_items)
+        self.console.print(f"Running benchmark on {total_items} problems...")
 
         results = []
         strategy_counts = {"sequential": 0, "parallel": 0}
@@ -875,9 +905,9 @@ class MetaMathEnsemble:
             TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
             console=self.console,
         ) as progress:
-            task = progress.add_task("[cyan]Benchmarking...[/cyan]", total=len(dataset))
+            task = progress.add_task("[cyan]Benchmarking...[/cyan]", total=total_items)
 
-            for i, item in enumerate(dataset):
+            for i, item in enumerate(sampled_items):
                 # Extract problem based on dataset format
                 if dataset_name == "gsm8k":
                     problem = item.get("question", "")
@@ -905,18 +935,18 @@ class MetaMathEnsemble:
                 progress.update(
                     task,
                     advance=1,
-                    description=f"[cyan]Problem {i+1}/{len(dataset)}[/cyan]",
+                    description=f"[cyan]Problem {i+1}/{total_items}[/cyan]",
                 )
 
         # Calculate statistics
-        sequential_pct = strategy_counts["sequential"] / len(dataset) * 100
-        parallel_pct = strategy_counts["parallel"] / len(dataset) * 100
+        sequential_pct = strategy_counts["sequential"] / total_items * 100
+        parallel_pct = strategy_counts["parallel"] / total_items * 100
 
         # Create benchmark result
         benchmark_result = {
             "dataset": dataset_name,
             "split": split,
-            "num_samples": len(dataset),
+            "num_samples": total_items,
             "strategy_counts": strategy_counts,
             "sequential_percentage": sequential_pct,
             "parallel_percentage": parallel_pct,
@@ -974,13 +1004,13 @@ if __name__ == "__main__":
 
     # Sample math problems for testing
     problems = [
-    "If 2x + 5 = 15, what is the value of x?",
-    "A rectangle has a length of 10 cm and a width of 5 cm. "
-    "What is its area?",
-    "If the probability of an event is 0.3, what is the probability "
-    "that it does not occur?",
-    "Solve the quadratic equation: x^2 - 5x + 6 = 0",
-    "A train travels at 60 km/h. How far will it travel in 2.5 hours?",
+        "If 2x + 5 = 15, what is the value of x?",
+        "A rectangle has a length of 10 cm and a width of 5 cm. "
+        "What is its area?",
+        "If the probability of an event is 0.3, what is the probability "
+        "that it does not occur?",
+        "Solve the quadratic equation: x^2 - 5x + 6 = 0",
+        "A train travels at 60 km/h. How far will it travel in 2.5 hours?",
     ]
 
     # Ask user which demo to run
