@@ -1,5 +1,11 @@
+from typing import List
+
 import numpy as np
-from adv_resolver_math.ensemble_iterations.memory_sharing_solver import MemorySharingMathSolver  # noqa: E501
+
+from adv_resolver_math.ensemble_iterations.enhanced_solver import Solution, VotingResult
+from adv_resolver_math.ensemble_iterations.memory_sharing_solver import (  # noqa: E501
+    MemorySharingMathSolver,
+)
 
 
 class LatentReasoner:
@@ -38,13 +44,20 @@ class LatentSpaceMathSolver(MemorySharingMathSolver):
     Solver using latent space reasoning (Coconut/Chain of Continuous Thought).
     """
 
-    def latent_voting(self, solutions):
+    def latent_voting(self, solutions: List[Solution]) -> VotingResult:
         # Vector-space voting using latent representations
         embeddings = [self.embedder.encode([s.answer])[0] for s in solutions]
         similarity_matrix = np.dot(embeddings, np.transpose(embeddings))
         consensus_idx = np.argmax(similarity_matrix.sum(axis=0))
-        return solutions[consensus_idx]
+        consensus_solution = solutions[consensus_idx]
+        agreement_agents = [s.agent_name for s in solutions]
+        confidence = float(similarity_matrix.sum(axis=0)[consensus_idx])
+        return VotingResult(
+            answer=consensus_solution.answer,
+            confidence=confidence,
+            agents_in_agreement=agreement_agents,
+        )
 
-    def vote_on_solutions(self, solutions):
+    def vote_on_solutions(self, solutions: List[Solution]) -> VotingResult:
         # Use latent voting for consensus
         return self.latent_voting(solutions)

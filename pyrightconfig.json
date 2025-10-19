@@ -1,0 +1,10 @@
+{
+  "exclude": [
+    "build",
+    "**/__pycache__",
+    "**/.venv",
+    "adv_resolver_math/adv_res_venv",
+    "htmlcov",
+    "universal_solver.egg-info"
+  ]
+}

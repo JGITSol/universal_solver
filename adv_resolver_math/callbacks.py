@@ -1,6 +1,9 @@
 # callbacks.py
 
+from __future__ import annotations
+
 import time
+from typing import Dict, Optional
 
 from langchain.callbacks.base import BaseCallbackHandler
 from rich.console import Console
@@ -17,13 +20,18 @@ class MathSolvingCallbackHandler(BaseCallbackHandler):
     def __init__(self, console: Console, model_name: str):
         self.console = console
         self.model_name = model_name
-        self.start_time = None
+        self.start_time: Optional[float] = None
         self.tokens = 0
         self.step_markers = 0
         self.equation_count = 0
+        self._last_metrics: Optional[Dict[str, float]] = None
 
     def on_llm_start(self, *args, **kwargs):
         self.start_time = time.time()
+        self.tokens = 0
+        self.step_markers = 0
+        self.equation_count = 0
+        self._last_metrics = None
         self.console.print(f"[dim]{self.model_name} is thinking...[/dim]")
 
     def on_llm_new_token(self, token: str, **kwargs):
@@ -38,7 +46,7 @@ class MathSolvingCallbackHandler(BaseCallbackHandler):
             self.equation_count += 1
 
         # Provide periodic updates
-        if self.tokens % 50 == 0:
+        if self.tokens % 50 == 0 and self.start_time is not None:
             elapsed = time.time() - self.start_time
             tokens_per_sec = self.tokens / max(0.1, elapsed)
             self.console.print(
@@ -50,7 +58,7 @@ class MathSolvingCallbackHandler(BaseCallbackHandler):
             )
 
     def on_llm_end(self, *args, **kwargs):
-        elapsed = time.time() - self.start_time
+        elapsed = time.time() - self.start_time if self.start_time else 0.0
         tokens_per_sec = self.tokens / max(0.1, elapsed)
 
         self.console.print(
@@ -67,21 +75,24 @@ class MathSolvingCallbackHandler(BaseCallbackHandler):
                 "equations[/dim]"
             )
         )
+        self._last_metrics = {
+            "time_seconds": elapsed,
+            "tokens": float(self.tokens),
+            "tokens_per_second": tokens_per_sec,
+            "step_markers": float(self.step_markers),
+            "equation_count": float(self.equation_count),
+        }
+        self.start_time = None
 
-    def on_llm_error(self, error: Exception, **kwargs):
+    def on_llm_error(self, error: BaseException, **kwargs):
         self.console.print(f"[red]Error with {self.model_name}: {error}[/red]")
 
     def get_metrics(self):
         """Return metrics collected during generation."""
-        if not self.start_time:
+        if self._last_metrics is None:
             return {}
 
-        elapsed = time.time() - self.start_time
         return {
             "model": self.model_name,
-            "tokens": self.tokens,
-            "time_seconds": elapsed,
-            "tokens_per_second": self.tokens / max(0.1, elapsed),
-            "step_markers": self.step_markers,
-            "equation_count": self.equation_count,
+            **self._last_metrics,
         }

@@ -6,6 +6,7 @@ Provides functions to run benchmarks, evaluate solutions, and output results.
 """
 
 import os
+from typing import Dict, List, cast
 
 import pandas as pd
 
@@ -39,13 +40,19 @@ def run_geometry_benchmark(
     Returns:
         list: List of result dictionaries for each problem.
     """
-    ds = load_benchmark_dataset(dataset_name, sample_size=sample_size)
+    ds: List[Dict[str, object]] = load_benchmark_dataset(
+        dataset_name, sample_size=sample_size
+    )
     solvers = register_solvers()
     gllava_solver = solvers["gllava_ollama"]  # or gllava_lmstudio
     results = []
-    for ex in ds:
-        problem, answer = get_problem_and_answer(ex, dataset_name)
-        problem_input = {"text": problem, "image_path": ex.get("image_path")}
+    for record in ds:
+        example = cast(Dict[str, object], record)
+        problem, answer = get_problem_and_answer(example, dataset_name)
+        problem_input = {
+            "text": problem,
+            "image_path": example.get("image_path"),
+        }
         solution = gllava_solver.solve(problem_input)
         is_correct = evaluate_solution(solution["solution"], answer)
         results.append(

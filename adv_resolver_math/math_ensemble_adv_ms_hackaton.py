@@ -34,6 +34,8 @@ class Solution:
     answer: str
     explanation: str
     confidence: float
+    verification_score: float = 0.0
+    process_reward: float = 0.0
 
 
 @dataclass

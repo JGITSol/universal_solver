@@ -1,12 +1,28 @@
-"""
-benchmark_datasets.py
+"""Utility helpers for loading HuggingFace math benchmark datasets.
 
-Industry-standard math datasets loader for benchmarking advanced math solvers (April 2025).
+The helpers in this module wrap ``datasets.load_dataset`` but provide
+type-safe handling for the many container types that the HuggingFace
+``datasets`` package may return (``Dataset``, ``DatasetDict``,
+``IterableDataset`` …). Pylance reports attribute access issues whenever we
+directly call methods such as ``select`` on a union of these container types.
+To keep the experience smooth inside VS Code we normalise every dataset into
+an in-memory list of dictionaries. This also gives us predictable behaviour
+for sampling without depending on optional dataset methods.
 """
+
+from __future__ import annotations
 
 import random
+from itertools import islice
+from typing import Dict, Iterable, List, cast
 
-from datasets import load_dataset
+from datasets import (
+    Dataset,
+    DatasetDict,
+    IterableDataset,
+    IterableDatasetDict,
+    load_dataset,
+)
 
 # Supported datasets and their configs
 BENCHMARK_DATASETS = {
@@ -25,15 +41,62 @@ def list_benchmark_datasets():
     return list(BENCHMARK_DATASETS.keys())
 
 
-def load_benchmark_dataset(name, split="test", sample_size=None, seed=42):
-    """Load a benchmark dataset (optionally sample a subset)."""
+def load_benchmark_dataset(
+    name: str,
+    split: str = "test",
+    sample_size: int | None = None,
+    seed: int = 42,
+) -> List[Dict[str, object]]:
+    """Load a benchmark dataset and return it as a list of samples.
+
+    HuggingFace datasets can materialise as several container types. We map
+    them into a concrete list so that downstream code receives a predictable
+    ``List[Dict[str, object]]``. The optional ``sample_size`` argument applies
+    a deterministic sample using the provided ``seed`` without relying on the
+    dataset's ``shuffle``/``select`` helpers (which are not available for all
+    dataset variants).
+    """
     if name not in BENCHMARK_DATASETS:
         raise ValueError(f"Unknown dataset: {name}")
     config = BENCHMARK_DATASETS[name]
-    ds = load_dataset(config["hf_id"], split=split)
-    if sample_size is not None:
-        ds = ds.shuffle(seed=seed).select(range(sample_size))
-    return ds
+    dataset_raw = load_dataset(config["hf_id"], split=split)
+
+    # Normalise to an iterable of samples for any HuggingFace container type.
+    if isinstance(dataset_raw, (DatasetDict, IterableDatasetDict)):
+        dataset_iterable = dataset_raw.get(split)
+        if dataset_iterable is None:
+            dataset_values = list(dataset_raw.values())
+            dataset_iterable = dataset_values[0] if dataset_values else []
+    else:
+        dataset_iterable = dataset_raw
+
+    samples: List[Dict[str, object]]
+    if isinstance(dataset_iterable, Dataset):
+        # ``Dataset`` already provides len and deterministic shuffling.
+        if sample_size is not None:
+            bounded = min(sample_size, len(dataset_iterable))
+            dataset_iterable = dataset_iterable.shuffle(seed=seed).select(
+                range(bounded)
+            )
+        samples = [cast(Dict[str, object], rec) for rec in dataset_iterable]
+    elif isinstance(dataset_iterable, IterableDataset):
+        # Streaming datasets are consumed lazily; take a prefix and optionally
+        # shuffle it deterministically.
+        if sample_size is None:
+            samples = [cast(Dict[str, object], rec) for rec in dataset_iterable]
+        else:
+            prefix = list(islice(dataset_iterable, sample_size))
+            random.Random(seed).shuffle(prefix)
+            samples = [cast(Dict[str, object], rec) for rec in prefix[:sample_size]]
+    else:
+        # Already a concrete sequence (typically ``list``).
+        iterable = cast(Iterable[Dict[str, object]], dataset_iterable)
+        samples = [cast(Dict[str, object], rec) for rec in iterable]
+        if sample_size is not None:
+            random.Random(seed).shuffle(samples)
+            samples = samples[:sample_size]
+
+    return samples
 
 
 def get_problem_and_answer(example, dataset_name):

@@ -1,3 +1,7 @@
+# rstar_math_solver.py
+
+from __future__ import annotations
+
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Dict, List, Optional
 
@@ -5,9 +9,12 @@ import numpy as np
 import sympy
 from sklearn.metrics.pairwise import cosine_similarity
 
-from adv_resolver_math.ensemble_iterations.latent_space_solver import LatentSpaceMathSolver
-from adv_resolver_math.math_ensemble_adv_ms_hackaton import Solution, VotingResult, Agent
+from adv_resolver_math.ensemble_iterations.latent_space_solver import (
+    LatentSpaceMathSolver,
+)
+from adv_resolver_math.math_ensemble_adv_ms_hackaton import Agent, Solution, VotingResult
 from clean_code.logger import get_logger
+
 logger = get_logger("rstar_math_solver")
 
 class RStarMathSolver(LatentSpaceMathSolver):
@@ -24,15 +31,17 @@ class RStarMathSolver(LatentSpaceMathSolver):
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
-        self.verification_cache = {}
+        self.verification_cache: Dict[str, float] = {}
         # dynamic configuration
         self.mcts_rounds = mcts_rounds
         self.evolution_rounds = evolution_rounds
         # allow custom reward weights or defaults
-        self.process_reward_model = reward_weights or self.init_reward_model()
-        self.mcts_tree = {}
+        self.process_reward_model: Dict[str, float] = (
+            reward_weights or self.init_reward_model()
+        )
+        self.mcts_tree: Dict[str, Any] = {}
 
-    def init_reward_model(self):
+    def init_reward_model(self) -> Dict[str, float]:
         return {
             "step_coherence": 0.4,
             "conceptual_consistency": 0.3,
@@ -129,11 +138,17 @@ class RStarMathSolver(LatentSpaceMathSolver):
 
     def verification_aware_vote(self, solutions: List[Solution]) -> VotingResult:
         """Vote weighting by combined verification and process scores."""
+        if not solutions:
+            return VotingResult(
+                answer="No solutions",
+                confidence=0.0,
+                agents_in_agreement=[],
+            )
         groups: Dict[str, Dict[str, Any]] = {}
         for sol in solutions:
             key = sol.answer
-            vs = getattr(sol, "verification_score", 0.0)
-            pr = getattr(sol, "process_reward", 0.0)
+            vs = sol.verification_score
+            pr = sol.process_reward
             weight = vs + pr
             if key not in groups:
                 groups[key] = {"solutions": [], "weight": 0.0}
@@ -141,7 +156,7 @@ class RStarMathSolver(LatentSpaceMathSolver):
             groups[key]["weight"] += weight
         best_ans, best_grp = max(groups.items(), key=lambda x: x[1]["weight"])
         agents = [s.agent_name for s in best_grp["solutions"]]
-        confidence = best_grp["weight"] / (len(solutions) * 2)
+        confidence = best_grp["weight"] / max(1.0, len(solutions) * 2)
         return VotingResult(
             answer=best_ans, confidence=confidence, agents_in_agreement=agents
         )
@@ -150,7 +165,7 @@ class RStarMathSolver(LatentSpaceMathSolver):
         """r*-math enhanced solve with MCTS, evolution, and final vote."""
         logger.info(f"Starting r*-math solve for: {problem}")
         # Stage 1: MCTS rollouts
-        sols = []
+        sols: List[Solution] = []
         with ThreadPoolExecutor() as executor:
             futures = {
                 executor.submit(self.mcts_rollout, ag, problem): ag

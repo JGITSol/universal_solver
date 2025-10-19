@@ -45,7 +45,7 @@ class MathSolvingCallbackHandler(BaseCallbackHandler):
     def __init__(self, console: Console, model_name: str):
         self.console = console
         self.model_name = model_name
-        self.start_time = None
+        self.start_time: float | None = None
         self.tokens = 0
 
     def on_llm_start(self, *args, **kwargs):
@@ -55,7 +55,7 @@ class MathSolvingCallbackHandler(BaseCallbackHandler):
 
     def on_llm_new_token(self, token: str, **kwargs):
         self.tokens += 1
-        if self.tokens % 50 == 0:
+        if self.tokens % 50 == 0 and self.start_time is not None:
             self.console.print(
                 f"[dim]{self.model_name}: {self.tokens} tokens generated[/dim]",
                 end="\r",
@@ -71,7 +71,7 @@ class MathSolvingCallbackHandler(BaseCallbackHandler):
         )
         self.start_time = None
 
-    def on_llm_error(self, error: Exception, **kwargs):
+    def on_llm_error(self, error: BaseException, **kwargs):
         self.console.print(f"[red]Error with {self.model_name}: {error}[/red]")
 
 
