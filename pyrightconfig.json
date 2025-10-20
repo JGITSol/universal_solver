@@ -1,10 +1,15 @@
 {
   "exclude": [
     "build",
+    "build/lib",
+    "adv_res_venv",
+    "adv_resolver_math/adv_res_venv",
+    "KAN",
+    "htmlcov",
+    "universal_solver.egg-info",
     "**/__pycache__",
     "**/.venv",
-    "adv_resolver_math/adv_res_venv",
-    "htmlcov",
-    "universal_solver.egg-info"
+    "**/venv",
+    "**/site-packages"
   ]
 }

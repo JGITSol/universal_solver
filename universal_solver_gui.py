@@ -189,15 +189,24 @@ class UniversalSolverGUI(ctk.CTk):
         stages = [
             (
                 "1. Problem Processing",
-                "Input is parsed and preprocessed. System identifies problem type and requirements.",
+                (
+                    "Input is parsed and preprocessed. System identifies problem "
+                    "type and requirements."
+                ),
             ),
             (
                 "2. Voting",
-                "Multiple solver agents propose solutions. Voting mechanism selects the most promising result.",
+                (
+                    "Multiple solver agents propose solutions. Voting mechanism "
+                    "selects the most promising result."
+                ),
             ),
             (
                 "3. Debugging",
-                "Detailed logs and traces are available for inspection. Useful for dev and troubleshooting.",
+                (
+                    "Detailed logs and traces are available for inspection. "
+                    "Useful for dev and troubleshooting."
+                ),
             ),
         ]
         for title, desc in stages:
