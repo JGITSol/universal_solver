@@ -1,11 +1,11 @@
+import threading
 import tkinter as tk
 from tkinter import ttk
-import threading
-
-import customtkinter as ctk
 
 # Types for clarity when manipulating solver collections
 from typing import Any, Dict, List, Tuple
+
+import customtkinter as ctk
 
 # Ensure CTk theme
 ctk.set_appearance_mode("System")
@@ -156,7 +156,9 @@ class UniversalSolverGUI(ctk.CTk):
 
         solver_pairs: List[Tuple[str, Any]] = list(solvers)
         self.solver_names: List[str] = [name for name, _ in solver_pairs]
-        self.solver_map: Dict[str, Any] = {name: solver for name, solver in solver_pairs}
+        self.solver_map: Dict[str, Any] = {
+            name: solver for name, solver in solver_pairs
+        }
         ctk.CTkLabel(
             left_panel, text="Processing Option", font=("Segoe UI", 13, "bold")
         ).pack(anchor="w", pady=(4, 0), padx=8)
@@ -169,7 +171,9 @@ class UniversalSolverGUI(ctk.CTk):
         # Optionally, show details of selected solver
         self.solver_detail_label = ctk.CTkLabel(
             left_panel,
-            text=f"Selected: {default_solver}" if default_solver else "No solvers registered",
+            text=f"Selected: {default_solver}"
+            if default_solver
+            else "No solvers registered",
             font=("Segoe UI", 11),
         )
         self.solver_detail_label.pack(anchor="w", padx=16, pady=(0, 6))
@@ -282,11 +286,15 @@ class UniversalSolverGUI(ctk.CTk):
                 else None
             ),
         )
+
         # Run in background thread to keep GUI responsive
         def run_solver():
             try:
-                # Unified interface: EnhancedMathSolver, MemorySharingMathSolver, LatentSpaceMathSolver all use get_solution/vote_on_solutions; RStarMathSolver uses solve
+                # Unified interface: EnhancedMathSolver, MemorySharingMathSolver,
+                # and LatentSpaceMathSolver call get_solution/vote_on_solutions;
+                # RStarMathSolver exposes solve instead.
                 from showcase_advanced_math import agents
+
                 processing_output = ""
                 voting_output = ""
                 debug_output = "[Processing completed successfully]\n"
@@ -294,11 +302,9 @@ class UniversalSolverGUI(ctk.CTk):
                 if solver_name == "RStarMathSolver":
                     result = solver.solve(query)
                     processing_output = f"[RStarMathSolver Result]\n{result}\n"
-                    voting_output = (
-                        "Final Answer: {}\nConfidence: {}\n".format(
-                            result.get("answer", result),
-                            result.get("confidence", ""),
-                        )
+                    voting_output = "Final Answer: {}\nConfidence: {}\n".format(
+                        result.get("answer", result),
+                        result.get("confidence", ""),
                     )
                 else:
                     agent_solutions = [
@@ -320,11 +326,13 @@ class UniversalSolverGUI(ctk.CTk):
                         else ""
                     )
                     voting_output = (
-                        "Final Answer: {}\nConfidence: {}\nAgents in agreement: {}\n".format(
-                            vote_result.answer,
-                            vote_result.confidence,
-                            agent_list,
-                        )
+                        "Final Answer: {}\n"
+                        "Confidence: {}\n"
+                        "Agents in agreement: {}\n"
+                    ).format(
+                        vote_result.answer,
+                        vote_result.confidence,
+                        agent_list,
                     )
 
                 self.after(
@@ -339,7 +347,7 @@ class UniversalSolverGUI(ctk.CTk):
         threading.Thread(target=run_solver, daemon=True).start()
 
     def on_hard_stop(self):
-        """Triggered when Hard Stop (Scram) is pressed. Simulate immediate stop."""
+        """Handle the Hard Stop button by simulating an immediate halt."""
         self.proc_panel.text.insert(
             "end", "\n[Hard Stop initiated: Processing interrupted!]"
         )
@@ -347,7 +355,7 @@ class UniversalSolverGUI(ctk.CTk):
         self.debug_panel.log.insert("end", "\n[Hard Stop: Debugging interrupted!]")
 
     def on_soft_stop(self):
-        """Triggered when Soft Stop (Summary) is pressed. Simulate graceful stop with summary."""
+        """Handle the Soft Stop button by simulating a graceful shutdown."""
         self.proc_panel.text.insert(
             "end", "\n[Soft Stop: Finishing current step and summarizing...]"
         )

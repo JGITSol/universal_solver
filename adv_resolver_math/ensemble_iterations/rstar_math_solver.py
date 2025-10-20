@@ -12,10 +12,15 @@ from sklearn.metrics.pairwise import cosine_similarity
 from adv_resolver_math.ensemble_iterations.latent_space_solver import (
     LatentSpaceMathSolver,
 )
-from adv_resolver_math.math_ensemble_adv_ms_hackaton import Agent, Solution, VotingResult
+from adv_resolver_math.math_ensemble_adv_ms_hackaton import (
+    Agent,
+    Solution,
+    VotingResult,
+)
 from clean_code.logger import get_logger
 
 logger = get_logger("rstar_math_solver")
+
 
 class RStarMathSolver(LatentSpaceMathSolver):
     """
@@ -93,7 +98,11 @@ class RStarMathSolver(LatentSpaceMathSolver):
         embeddings = [self.embedder.encode(step) for step in steps]
         scores = []
         for i in range(1, len(embeddings)):
-            scores.append(cosine_similarity(np.array([embeddings[i - 1]]), np.array([embeddings[i]]))[0][0])
+            scores.append(
+                cosine_similarity(
+                    np.array([embeddings[i - 1]]), np.array([embeddings[i]])
+                )[0][0]
+            )
         return float(np.mean(scores)) if scores else 0.0
 
     def analyze_conceptual_consistency(self, solution: Solution) -> float:
@@ -192,7 +201,12 @@ class RStarMathSolver(LatentSpaceMathSolver):
         # Stage 4: Final vote
         final = self.verification_aware_vote(survivors)
         # Prepare result
-        result = {"solutions": [], "final_answer": [], "final_confidence": [], "supporting_agents": []}
+        result = {
+            "solutions": [],
+            "final_answer": [],
+            "final_confidence": [],
+            "supporting_agents": [],
+        }
         for sol in survivors:
             result["solutions"].append(
                 {

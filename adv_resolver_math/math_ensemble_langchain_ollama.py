@@ -1005,8 +1005,7 @@ if __name__ == "__main__":
     # Sample math problems for testing
     problems = [
         "If 2x + 5 = 15, what is the value of x?",
-        "A rectangle has a length of 10 cm and a width of 5 cm. "
-        "What is its area?",
+        "A rectangle has a length of 10 cm and a width of 5 cm. " "What is its area?",
         "If the probability of an event is 0.3, what is the probability "
         "that it does not occur?",
         "Solve the quadratic equation: x^2 - 5x + 6 = 0",

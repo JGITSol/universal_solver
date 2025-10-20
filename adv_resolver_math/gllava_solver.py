@@ -27,9 +27,7 @@ class GLLaVASolver:
             api_url (str, optional): API URL for the model server. Defaults to Ollama's endpoint if not provided.
         """
         self.use_ollama = use_ollama
-        self.api_url = (
-            api_url or "http://localhost:11434/api/generate"
-        )
+        self.api_url = api_url or "http://localhost:11434/api/generate"
 
     def solve(self, problem: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -54,7 +52,7 @@ class GLLaVASolver:
         Returns:
             dict: Solution and metadata from Ollama API.
         """
-    # import json
+        # import json
 
         import requests
 

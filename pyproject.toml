@@ -21,3 +21,9 @@ extend-exclude = [
 [tool.mypy]
 python_version = "3.11"
 ignore_missing_imports = true
+exclude = [
+	"adv_res_venv",
+	"adv_resolver_math/adv_res_venv",
+	"build",
+	"KAN/venv",
+]

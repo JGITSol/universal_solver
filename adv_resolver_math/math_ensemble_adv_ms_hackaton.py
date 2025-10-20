@@ -401,9 +401,7 @@ class MathProblemSolver:
             logger.error(f"Discussion generation error: {str(e)}", exc_info=True)
             # Return specific error message format for test compatibility
             # Match test expectation
-            return (
-                "Discussion could not be generated due to an error: API Error"
-            )
+            return "Discussion could not be generated due to an error: API Error"
 
     @retry(
         stop=stop_after_attempt(2), wait=wait_exponential(multiplier=1, min=2, max=10)

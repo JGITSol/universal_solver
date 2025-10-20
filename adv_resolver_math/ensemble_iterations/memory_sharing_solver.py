@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import List
+
 import numpy as np
 import torch
 import torch.nn as nn
@@ -45,32 +46,25 @@ class MemorySharingMathSolver(EnhancedMathSolver):
         self.agent_memories = {}
         for name in self.performance_stats:
             zeros_shape = (1, 1, self.memory_dim)
-            self.agent_memories[name] = torch.zeros(
-                *zeros_shape
-            )
+            self.agent_memories[name] = torch.zeros(*zeros_shape)
 
     def aggregate_memories(self):
         # Agreguj pamięci wszystkich agentów
         agent_memory_list = [mem for mem in self.agent_memories.values()]
         cat_dim = 1
-        memories = torch.cat(
-            agent_memory_list,
-            dim=cat_dim
-        )
+        memories = torch.cat(agent_memory_list, dim=cat_dim)
         pooled = self.shared_memory_layer(memories)
         return pooled
 
     def update_memory(self, agent_name: str, embedding: np.ndarray):
         # Aktualizuj pamięć agenta (float32 dla torch)
-        self.agent_memories[agent_name] = (
-            torch.tensor(
-                embedding,
-                dtype=torch.float32,
-            ).reshape(
-                1,
-                1,
-                -1,
-            )
+        self.agent_memories[agent_name] = torch.tensor(
+            embedding,
+            dtype=torch.float32,
+        ).reshape(
+            1,
+            1,
+            -1,
         )
 
     def vote_on_solutions(self, solutions: List[Solution]) -> VotingResult:
