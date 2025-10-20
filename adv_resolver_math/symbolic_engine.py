@@ -22,9 +22,12 @@ class EnhancedSymbolicEngine:
 
     def __init__(self, domain=MathDomain.GENERAL):
         """
-        Initialize the symbolic reasoning engine for a specific mathematical domain.
+        Initialize the symbolic reasoning engine for a specific mathematical
+        domain.
+
         Args:
-            domain (MathDomain): The mathematical domain for the engine (default: GENERAL).
+            domain (MathDomain): The mathematical domain for the engine
+                (default: GENERAL).
         """
         self.domain = domain
         self.facts: Set[Any] = set()
@@ -67,13 +70,12 @@ class EnhancedSymbolicEngine:
         return {"zero_product": "if ab=0 then a=0 or b=0"}
 
     def _register_geometry_rules(self):
-        """
-        Register symbolic inference rules specific to geometry domain.
-        """
+        """Register symbolic inference rules specific to the geometry domain."""
 
         def triangle_sum_rule(facts, entities):
             """
             If an entity is a triangle, add the 'triangle_sum_180' fact.
+
             Args:
                 facts (set): Set of known facts.
                 entities (dict): Dictionary of entities.
@@ -85,13 +87,13 @@ class EnhancedSymbolicEngine:
         self.rules.append(triangle_sum_rule)
 
     def _register_algebra_rules(self):
-        """
-        Register symbolic inference rules specific to algebra domain.
-        """
+        """Register symbolic inference rules specific to the algebra domain."""
 
         def zero_product_rule(facts, entities):
             """
-            If an entity is a product with value zero, add the 'zero_product' fact.
+            If an entity is a product with value zero, add the 'zero_product'
+            fact.
+
             Args:
                 facts (set): Set of known facts.
                 entities (dict): Dictionary of entities.

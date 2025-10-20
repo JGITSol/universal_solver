@@ -30,13 +30,11 @@ class SharedMemoryLayer(nn.Module):
 @dataclass
 class MemorySharingMathSolver(EnhancedMathSolver):
     embedding_dim: int = 384
-    """
-    Extends EnhancedMathSolver with shared memory i knowledge distillation między agentami.
-    """
+    """Extend EnhancedMathSolver with shared memory knowledge sharing across agents."""
 
     def __post_init__(self):
         super().__post_init__()
-        # Użyj embedding_dim jeśli podany, w przeciwnym razie 128 dla kompatybilności wstecznej
+        # Use provided embedding_dim; fallback to 128 for backwards compatibility
         self.memory_dim = getattr(
             self,
             "embedding_dim",
@@ -49,7 +47,7 @@ class MemorySharingMathSolver(EnhancedMathSolver):
             self.agent_memories[name] = torch.zeros(*zeros_shape)
 
     def aggregate_memories(self):
-        # Agreguj pamięci wszystkich agentów
+        # Collect memories from each agent
         agent_memory_list = [mem for mem in self.agent_memories.values()]
         cat_dim = 1
         memories = torch.cat(agent_memory_list, dim=cat_dim)
@@ -57,7 +55,7 @@ class MemorySharingMathSolver(EnhancedMathSolver):
         return pooled
 
     def update_memory(self, agent_name: str, embedding: np.ndarray):
-        # Aktualizuj pamięć agenta (float32 dla torch)
+        # Update agent memory (float32 required by torch tensors)
         self.agent_memories[agent_name] = torch.tensor(
             embedding,
             dtype=torch.float32,
@@ -68,9 +66,10 @@ class MemorySharingMathSolver(EnhancedMathSolver):
         )
 
     def vote_on_solutions(self, solutions: List[Solution]) -> VotingResult:
-        # Przed głosowaniem aktualizuj pamięci embeddingami odpowiedzi
+        # Update memories with embeddings prior to voting
         for s in solutions:
-            self.update_memory(s.agent_name, self.embedder.encode([s.answer]))
-        # Opcjonalnie agreguj pamięci do głosowania
+            embedding = self.embedder.encode([s.answer])
+            self.update_memory(s.agent_name, embedding)
+        # Optionally aggregate shared memory before voting
         _ = self.aggregate_memories()
         return super().vote_on_solutions(solutions)

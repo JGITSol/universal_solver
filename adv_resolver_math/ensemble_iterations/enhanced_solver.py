@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Tuple
 
 import numpy as np
 from sentence_transformers import SentenceTransformer
@@ -41,7 +41,7 @@ class EnhancedMathSolver(MathProblemSolver):
         Enhanced voting with semantic clustering and agent performance weighting.
         """
         # Cluster solutions by semantic similarity
-        solution_groups = []
+        solution_groups: List[List[Solution]] = []
         for solution in solutions:
             matched = False
             for group in solution_groups:
@@ -59,7 +59,7 @@ class EnhancedMathSolver(MathProblemSolver):
                 solution_groups.append([solution])
 
         # Weighted scores by confidence and historical performance
-        group_scores = []
+        group_scores: List[Tuple[float, List[Solution]]] = []
         for group in solution_groups:
             score = sum(
                 s.confidence

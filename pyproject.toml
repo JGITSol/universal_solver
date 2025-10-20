@@ -4,6 +4,17 @@ target-version = ['py311']
 
 [tool.isort]
 profile = "black"
+skip = [
+	"adv_res_venv",
+	"adv_resolver_math/adv_res_venv",
+	"KAN/venv",
+	"KAN",
+	"build",
+	"htmlcov",
+	"universal_solver.egg-info",
+	"adv_resolver_math/adv_resolver_math.egg-info",
+]
+skip_glob = ["**/__pycache__"]
 
 [tool.flake8]
 max-line-length = 88

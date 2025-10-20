@@ -1,6 +1,3 @@
-import sys
-from pathlib import Path
-
 from adv_resolver_math.ensemble_iterations.enhanced_solver import EnhancedMathSolver
 from adv_resolver_math.ensemble_iterations.latent_space_solver import (
     LatentSpaceMathSolver,
@@ -100,15 +97,9 @@ solvers = [
 kan_model = KAN(width=[1, 3, 1], grid=5, k=3)
 symbolic_pipeline = SymbolicRegressionPipeline(kan_model)
 
-# Setup modules
 visualizer = MathVisualizer()
 tool_manager = ToolIntegrationManager()
 knowledge_manager = KnowledgeManagementSystem(db_path="showcase_knowledge_db.json")
-
-from .neuro_symbolic_system import NeuroSymbolicMathSystem
-
-# === ENSEMBLE SHOWCASE ===
-from .solver_adapter import SolverAdapter
 
 problems = [
     ("Nonlinear Equation", "Solve for x: x^3 - 6x^2 + 11x - 6 = 0"),

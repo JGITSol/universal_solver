@@ -2,7 +2,7 @@ import os
 import time
 from threading import Lock
 
-import requests
+import requests  # type: ignore[import-untyped]
 from dotenv import load_dotenv
 
 # Load .env at import time

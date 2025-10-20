@@ -1,7 +1,5 @@
 from unittest.mock import MagicMock
 
-import pytest
-
 from clean_code.knowledge_management import KnowledgeManagementSystem
 from clean_code.neuro_symbolic_system import NeuroSymbolicMathSystem
 from clean_code.solver_adapter import SolverAdapter

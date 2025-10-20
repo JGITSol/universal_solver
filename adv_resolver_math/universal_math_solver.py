@@ -6,7 +6,8 @@ from adv_resolver_math.symbolic_engine import EnhancedSymbolicEngine, MathDomain
 
 class UniversalMathSolver:
     """
-    Minimal orchestrator integrating symbolic engine, ensemble search, proof assistant, and latent reasoning.
+    Minimal orchestrator integrating symbolic engine, ensemble search,
+    proof assistant, and latent reasoning.
     """
 
     def __init__(self, domain=MathDomain.ALGEBRA):

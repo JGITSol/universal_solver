@@ -3,7 +3,8 @@ import numpy as np
 
 class LatentReasoningModule:
     """
-    Minimal latent reasoning module for embedding mathematical objects and computing similarity.
+    Minimal latent reasoning module for embedding mathematical objects and
+    computing similarity.
     """
 
     def __init__(self, embedding_dim=8):
@@ -21,4 +22,5 @@ class LatentReasoningModule:
         vec2 = np.array(vec2)
         if np.linalg.norm(vec1) == 0 or np.linalg.norm(vec2) == 0:
             return 0.0
-        return float(np.dot(vec1, vec2) / (np.linalg.norm(vec1) * np.linalg.norm(vec2)))
+        denominator = np.linalg.norm(vec1) * np.linalg.norm(vec2)
+        return float(np.dot(vec1, vec2) / denominator)

@@ -1,6 +1,7 @@
 """
 CLI for benchmarking solvers on industry-standard math datasets.
-Supports integration with HuggingFace, Kaggle, Google Cloud, Azure, and Colab-ready workflows.
+Supports integration with HuggingFace, Kaggle, Google Cloud, Azure, and
+Colab-ready workflows.
 """
 
 import argparse
@@ -9,7 +10,6 @@ from pathlib import Path
 
 import pandas as pd
 
-from adv_resolver_math.math_ensemble_adv_ms_hackaton import MathProblemSolver
 from benchmark_datasets import (
     get_problem_and_answer,
     list_benchmark_datasets,

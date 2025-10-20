@@ -1,11 +1,11 @@
 """
-Showcase script for advanced mathematics problem solving using all advanced ensemble solvers.
-Demonstrates nonlinear equations, systems, calculus, optimization, and geometry/combinatorics.
+Showcase script for advanced mathematics problem solving with ensemble solvers.
+Demonstrates nonlinear equations, systems, calculus, optimization, and geometry.
 """
 
-import os
-import sys
+from datetime import datetime
 from pathlib import Path
+from typing import Any, Dict, List, Optional, Union
 
 import pandas as pd
 from rich import box
@@ -21,7 +21,7 @@ from adv_resolver_math.ensemble_iterations.memory_sharing_solver import (
     MemorySharingMathSolver,
 )
 from adv_resolver_math.ensemble_iterations.rstar_math_solver import RStarMathSolver
-from adv_resolver_math.math_ensemble_adv_ms_hackaton import Agent
+from adv_resolver_math.math_ensemble_adv_ms_hackaton import Agent, Solution, VotingResult
 
 # Setup rich console
 theme_console = Console()
@@ -30,7 +30,7 @@ theme_console = Console()
 OUTPUT_DIR = Path("showcase_results")
 OUTPUT_DIR.mkdir(exist_ok=True)
 
-# Define a pool of diverse agents (can adjust models as available on your Ollama server)
+# Define a pool of diverse agents (adjust models to match your Ollama server)
 agents = [
     # Local/ollama agents
     Agent(
@@ -147,7 +147,11 @@ def log_result_rich(solver_name, problem_type, problem, result):
         theme_console.print(
             Panel(
                 table,
-                title=f"Final: [bold green]{answer}[/bold green] | Confidence: [yellow]{confidence:.2f}[/yellow] | Supporting: {agents}",
+                title=(
+                    f"Final: [bold green]{answer}[/bold green] | "
+                    f"Confidence: [yellow]{confidence:.2f}[/yellow] | "
+                    f"Supporting: {agents}"
+                ),
                 border_style="bold blue",
             )
         )
@@ -163,14 +167,18 @@ def log_result_rich(solver_name, problem_type, problem, result):
         theme_console.print(
             Panel(
                 table,
-                title=f"Final: [bold green]{answer}[/bold green] | Confidence: [yellow]{confidence:.2f}[/yellow] | Supporting: {agents}",
+                title=(
+                    f"Final: [bold green]{answer}[/bold green] | "
+                    f"Confidence: [yellow]{confidence:.2f}[/yellow] | "
+                    f"Supporting: {agents}"
+                ),
                 border_style="bold blue",
             )
         )
 
 
 def collect_decisions(solver_name, problem_type, problem, result, agent_solutions=None):
-    # Returns a list of dicts, one per agent/decision, plus a consensus row if applicable
+    # Return rows for agent decisions along with optional consensus entries
     rows = []
     if isinstance(result, dict):
         # Standard: all agent solutions are in result['solutions']
@@ -207,7 +215,7 @@ def collect_decisions(solver_name, problem_type, problem, result, agent_solution
             }
         )
     else:
-        # For solvers returning only a consensus (e.g. LatentSpaceMathSolver), log all agent solutions if available
+        # When only consensus is returned log agent solutions if available
         if agent_solutions is not None:
             for sol in agent_solutions:
                 rows.append(
@@ -248,9 +256,6 @@ def collect_decisions(solver_name, problem_type, problem, result, agent_solution
     return rows
 
 
-from datetime import datetime
-
-
 def export_results(df: pd.DataFrame, out_dir: Path):
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     excel_path = out_dir / f"math_showcase_results_{timestamp}.xlsx"
@@ -258,16 +263,20 @@ def export_results(df: pd.DataFrame, out_dir: Path):
     df.to_excel(excel_path, index=False)
     df.to_parquet(parquet_path, index=False)
     theme_console.print(
-        f"[bold green]Exported results to:[/bold green] [cyan]{excel_path}[/cyan] and [cyan]{parquet_path}[/cyan]"
+        (
+            "[bold green]Exported results to:[/bold green] "
+            f"[cyan]{excel_path}[/cyan] and [cyan]{parquet_path}[/cyan]"
+        )
     )
 
 
 if __name__ == "__main__":
-    all_rows = []
+    all_rows: List[Dict[str, Any]] = []
     for problem_type, problem in test_problems:
         for solver_name, solver in solvers:
             try:
-                agent_solutions = None
+                agent_solutions: Optional[List[Solution]] = None
+                result: Union[VotingResult, Dict[str, Any]]
                 if solver_name == "RStarMathSolver":
                     result = solver.solve(problem)
                 else:
@@ -287,7 +296,10 @@ if __name__ == "__main__":
                 )
             except Exception as e:
                 theme_console.print(
-                    f"[bold red][ERROR][/bold red] {solver_name} failed on {problem_type}: {e}"
+                    (
+                        "[bold red][ERROR][/bold red] "
+                        f"{solver_name} failed on {problem_type}: {e}"
+                    )
                 )
     if all_rows:
         df = pd.DataFrame(all_rows)

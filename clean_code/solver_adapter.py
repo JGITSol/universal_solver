@@ -7,8 +7,8 @@ logger = get_logger(__name__)
 
 class SolverAdapter:
     """
-    Adapter to unify the interface of symbolic regression (KAN) and ensemble math solvers
-    for use in the neuro-symbolic system.
+    Adapter to unify the interface of symbolic regression (KAN) and ensemble math
+    solvers for use in the neuro-symbolic system.
     """
 
     def __init__(self, solver_instance, solver_type: str = "ensemble"):

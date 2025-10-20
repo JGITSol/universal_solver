@@ -1,5 +1,3 @@
-import pytest
-
 from adv_resolver_math.proof_assistant_interface import ProofAssistantInterface
 
 

@@ -1,5 +1,3 @@
-import pytest
-
 from adv_resolver_math.symbolic_engine import MathDomain
 from adv_resolver_math.universal_math_solver import UniversalMathSolver
 

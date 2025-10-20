@@ -1,7 +1,8 @@
 """
 GLLaVASolver Module
 
-Provides a solver interface for G-LLaVA models to solve geometric problems with diagrams, supporting both Ollama and LM Studio backends.
+Provides a solver interface for G-LLaVA models to solve geometric problems with
+diagrams, supporting both Ollama and LM Studio backends.
 """
 
 import os
@@ -14,8 +15,8 @@ from typing import (
 
 class GLLaVASolver:
     """
-    Solver that uses the G-LLaVA model for solving geometric problems with diagrams.
-    Supports both Ollama and LM Studio as backend model servers.
+    Solver that uses the G-LLaVA model for solving geometric problems with
+    diagrams. Supports both Ollama and LM Studio as backend model servers.
     """
 
     def __init__(self, use_ollama: bool = True, api_url: Optional[str] = None):
@@ -23,8 +24,10 @@ class GLLaVASolver:
         Initialize the G-LLaVA solver.
 
         Args:
-            use_ollama (bool): Whether to use Ollama (True) or LM Studio (False).
-            api_url (str, optional): API URL for the model server. Defaults to Ollama's endpoint if not provided.
+            use_ollama (bool): Whether to use Ollama (True) or LM Studio
+                (False).
+            api_url (str, optional): API URL for the model server. Defaults to
+                Ollama's endpoint if not provided.
         """
         self.use_ollama = use_ollama
         self.api_url = api_url or "http://localhost:11434/api/generate"
@@ -34,9 +37,11 @@ class GLLaVASolver:
         Solve a geometric problem using the G-LLaVA model.
 
         Args:
-            problem (dict): Dictionary containing 'text' and optionally 'image_path'.
+            problem (dict): Dictionary containing 'text' and optionally
+                'image_path'.
         Returns:
-            dict: Dictionary with solution text, model used, confidence score, and metadata.
+            dict: Dictionary with solution text, model used, confidence score,
+                and metadata.
         """
         if self.use_ollama:
             return self._solve_with_ollama(problem)
@@ -48,13 +53,14 @@ class GLLaVASolver:
         Solve a geometric problem using the Ollama G-LLaVA API.
 
         Args:
-            problem (dict): Problem input with 'text' and optionally 'image_path'.
+            problem (dict): Problem input with 'text' and optionally
+                'image_path'.
         Returns:
             dict: Solution and metadata from Ollama API.
         """
         # import json
 
-        import requests
+        import requests  # type: ignore[import-untyped]
 
         prompt = problem["text"]
         image_path = problem.get("image_path")
@@ -79,7 +85,8 @@ class GLLaVASolver:
         Solve a geometric problem using the LM Studio API.
 
         Args:
-            problem (dict): Problem input with 'text' and optionally 'image_path'.
+            problem (dict): Problem input with 'text' and optionally
+                'image_path'.
         Returns:
             dict: Solution and metadata from LM Studio API (currently stub).
         """

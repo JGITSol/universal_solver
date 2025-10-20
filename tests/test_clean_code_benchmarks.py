@@ -3,12 +3,9 @@ import time
 import pytest
 
 from adv_resolver_math.math_ensemble_adv_ms_hackaton import Agent, MathProblemSolver
-from clean_code.knowledge_management import KnowledgeManagementSystem
 from clean_code.neuro_symbolic_system import NeuroSymbolicMathSystem
 from clean_code.solver_adapter import SolverAdapter
 from clean_code.symbolic_regression_pipeline import SymbolicRegressionPipeline
-from clean_code.tool_integration import ToolIntegrationManager
-from clean_code.visualization import MathVisualizer
 from kan import KAN
 
 

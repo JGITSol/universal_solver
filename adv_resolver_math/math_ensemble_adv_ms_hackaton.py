@@ -3,9 +3,9 @@ import os
 import re
 import sys
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, TypedDict
 
-import requests
+import requests  # type: ignore[import-untyped]
 from langchain_ollama import OllamaLLM
 from tenacity import retry, stop_after_attempt, wait_exponential
 
@@ -13,7 +13,10 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
-    handlers=[logging.FileHandler("math_ensemble.log"), logging.StreamHandler()],
+    handlers=[
+        logging.FileHandler("math_ensemble.log"),
+        logging.StreamHandler(),
+    ],
 )
 logger = logging.getLogger(__name__)
 
@@ -45,6 +48,11 @@ class VotingResult:
     agents_in_agreement: List[str]
 
 
+class AnswerGroup(TypedDict):
+    solutions: List["Solution"]
+    total_confidence: float
+
+
 @dataclass
 class MathProblemSolver:
     agents: List[Agent]
@@ -63,10 +71,11 @@ class MathProblemSolver:
             ):
                 # Very small heuristic:
                 # if problem contains an equation x^2 - 4, return 2 and -2
-                # Otherwise return a simple ANSWER format to satisfy parsers in tests.
+                # Otherwise return generic ANSWER format for tests.
                 if isinstance(prompt, str) and "x^2 - 4" in prompt:
                     return (
-                        "ANSWER: 2 and -2\n\nEXPLANATION: Mocked response for x^2 - 4 = 0.\n"
+                        "ANSWER: 2 and -2\n\n"
+                        "EXPLANATION: Mocked response for x^2 - 4 = 0.\n"
                         # Confidence for test parser
                         "\nCONFIDENCE: 0.9"
                     )
@@ -80,7 +89,7 @@ class MathProblemSolver:
         # Prefer explicit environment variable for CI/dev control
         if os.environ.get("USOLVE_TEST_MODE") == "1":
             use_dummy = True
-        # Pytest sets certain runtime markers; detect test-run environment as a fallback
+    # Pytest sets runtime markers; detect test-run environment as a fallback
         if not use_dummy and "pytest" in sys.modules:
             use_dummy = True
 
@@ -104,7 +113,10 @@ class MathProblemSolver:
         stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10)
     )
     def get_solution(
-        self, agent: Agent, problem: str, previous_solutions=None
+        self,
+        agent: Agent,
+        problem: str,
+        previous_solutions: Optional[List[Solution]] = None,
     ) -> Solution:
         """Have an agent solve a math problem"""
 
@@ -243,14 +255,14 @@ class MathProblemSolver:
             return VotingResult(answer="Error", confidence=0.0, agents_in_agreement=[])
 
         # Filter out error solutions and normalize answers
-        valid_solutions = []
+        valid_solutions: List[tuple[Solution, str]] = []
         for s in solutions:
             normalized = self._normalize_answer(s.answer)
             if s.answer.lower() != "error" and normalized not in ["", "error"]:
                 valid_solutions.append((s, normalized))
 
         # Group solutions by normalized answer
-        answer_groups = {}
+        answer_groups: Dict[str, AnswerGroup] = {}
         for solution, normalized in valid_solutions:
             if normalized not in answer_groups:
                 answer_groups[normalized] = {"solutions": [], "total_confidence": 0.0}

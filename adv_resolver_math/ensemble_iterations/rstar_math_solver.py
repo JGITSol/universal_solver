@@ -24,7 +24,8 @@ logger = get_logger("rstar_math_solver")
 
 class RStarMathSolver(LatentSpaceMathSolver):
     """
-    Solver with r*-math: symbolic/code verification, process reward, and MCTS-inspired exploration.
+    Solver with r*-math that adds symbolic/code verification, process rewards,
+    and MCTS-inspired exploration.
     """
 
     def __init__(
@@ -72,7 +73,7 @@ class RStarMathSolver(LatentSpaceMathSolver):
                         executor.submit(self.verify_single_step, problem, step.strip())
                     )
             results = [f.result() for f in futures]
-            verification_score = np.mean(results) if results else 0.0
+            verification_score = float(np.mean(results)) if results else 0.0
         return float(verification_score)
 
     def verify_single_step(self, problem: str, step: str) -> float:
@@ -85,9 +86,8 @@ class RStarMathSolver(LatentSpaceMathSolver):
 
     def calculate_process_reward(self, solution: Solution) -> float:
         # Dummy: reward based on explanation length and confidence
-        reward = (len(solution.explanation.split()) / 100) * self.process_reward_model[
-            "step_coherence"
-        ]
+        word_count = len(solution.explanation.split()) / 100
+        reward = word_count * self.process_reward_model["step_coherence"]
         reward += (
             solution.confidence * self.process_reward_model["conceptual_consistency"]
         )
@@ -186,7 +186,9 @@ class RStarMathSolver(LatentSpaceMathSolver):
         for sol in sols:
             sol.verification_score = self.code_verification(problem, sol)
             sol.process_reward = self.calculate_process_reward(sol)
-            sol.confidence = 0.6 * sol.verification_score + 0.4 * sol.process_reward
+            sol.confidence = (
+                0.6 * sol.verification_score + 0.4 * sol.process_reward
+            )
         # Stage 3: Evolutionary iterations (customizable)
         survivors = sols
         for _ in range(self.evolution_rounds):
@@ -194,14 +196,16 @@ class RStarMathSolver(LatentSpaceMathSolver):
             for sol in refined:
                 sol.verification_score = self.code_verification(problem, sol)
                 sol.process_reward = self.calculate_process_reward(sol)
-                sol.confidence = 0.6 * sol.verification_score + 0.4 * sol.process_reward
-            survivors = sorted(refined, key=lambda s: s.confidence, reverse=True)[
-                : max(1, len(self.agents) // 2)
-            ]
+                sol.confidence = (
+                    0.6 * sol.verification_score + 0.4 * sol.process_reward
+                )
+            survivors = sorted(refined, key=lambda s: s.confidence, reverse=True)
+            limit = max(1, len(self.agents) // 2)
+            survivors = survivors[:limit]
         # Stage 4: Final vote
         final = self.verification_aware_vote(survivors)
         # Prepare result
-        result = {
+        result: Dict[str, List[Any]] = {
             "solutions": [],
             "final_answer": [],
             "final_confidence": [],

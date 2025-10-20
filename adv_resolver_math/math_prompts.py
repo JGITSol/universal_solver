@@ -2,21 +2,20 @@
 
 # Define the math prompt template for different models
 
-BASE_MATH_PROMPT = """
-You are an expert mathematical problem solver. Your task is to solve the following math problem step-by-step, showing all your work clearly.
-
-Problem: {problem}
-
-Please follow these guidelines:
-1. Break down the problem into clear, logical steps
-2. Explain your reasoning at each step
-3. Use mathematical notation where appropriate
-4. Verify your answer
-5. Present your final answer in a \\boxed{{answer}} format
-    or as **Final Answer**: [your answer]
-
-Solution:
-"""
+BASE_MATH_PROMPT = (
+    "You are an expert mathematical problem solver."
+    " Your task is to solve the following math problem step-by-step,"
+    " showing all your work clearly.\n\n"
+    "Problem: {problem}\n\n"
+    "Please follow these guidelines:\n"
+    "1. Break down the problem into clear, logical steps\n"
+    "2. Explain your reasoning at each step\n"
+    "3. Use mathematical notation where appropriate\n"
+    "4. Verify your answer\n"
+    "5. Present your final answer in a \\boxed{{answer}} format\n"
+    "    or as **Final Answer**: [your answer]\n\n"
+    "Solution:\n"
+)
 
 # Model-specific prompts can be defined here if needed
 LLAMA_MATH_PROMPT = BASE_MATH_PROMPT

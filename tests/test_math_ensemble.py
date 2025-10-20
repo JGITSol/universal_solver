@@ -1,5 +1,3 @@
-import pytest
-
 from adv_resolver_math.math_ensemble_adv_ms_hackaton import (
     Agent,
     MathProblemSolver,

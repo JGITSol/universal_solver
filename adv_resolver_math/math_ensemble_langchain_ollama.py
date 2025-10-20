@@ -10,7 +10,11 @@ from typing import List, Optional
 import matplotlib.pyplot as plt
 import pandas as pd
 import sympy
-from datasets import DatasetDict, IterableDatasetDict, load_dataset
+from datasets import (
+    DatasetDict,
+    IterableDatasetDict,
+    load_dataset,
+)
 from langchain.callbacks.base import BaseCallbackHandler
 
 # LangChain components
@@ -23,7 +27,9 @@ from rich.table import Table
 
 # Define the math prompt template
 MATH_PROMPT_TEMPLATE = """
-You are an expert mathematical problem solver. Your task is to solve the following math problem step-by-step, showing all your work clearly.
+You are an expert mathematical problem solver.
+Your task is to solve the following math problem step-by-step,
+showing all your work clearly.
 
 Problem: {problem}
 
@@ -67,7 +73,10 @@ class MathSolvingCallbackHandler(BaseCallbackHandler):
         else:
             elapsed = 0.0
         self.console.print(
-            f"[dim]{self.model_name} completed in {elapsed:.2f} seconds, generated {self.tokens} tokens[/dim]"
+            (
+                f"[dim]{self.model_name} completed in {elapsed:.2f} seconds, "
+                f"generated {self.tokens} tokens[/dim]"
+            )
         )
         self.start_time = None
 
@@ -118,7 +127,10 @@ class MathEnsembleSolver:
         # Cache setup
         if self.use_cache:
             os.makedirs(self.cache_dir, exist_ok=True)
-            self.cache_file = os.path.join(self.cache_dir, "math_solutions_cache.json")
+            self.cache_file = os.path.join(
+                self.cache_dir,
+                "math_solutions_cache.json",
+            )
             self._load_cache()
 
     def _setup_environment(self):
@@ -129,12 +141,16 @@ class MathEnsembleSolver:
 
         # Check if Ollama service is running
         try:
-            import requests
+            import requests  # type: ignore[import-untyped]
 
-            response = requests.get(f"{self.ollama_base_url}/api/tags", timeout=2)
+            response = requests.get(
+                f"{self.ollama_base_url}/api/tags",
+                timeout=2,
+            )
             if response.status_code != 200:
                 self.console.print(
-                    "[yellow]Warning: Ollama service may not be running correctly[/yellow]"
+                    "[yellow]Warning: Ollama service may not be running correctly"
+                    "[/yellow]"
                 )
                 self.console.print(
                     f"[yellow]Response code: {response.status_code}[/yellow]"
@@ -196,13 +212,18 @@ class MathEnsembleSolver:
                     progress.update(
                         task,
                         completed=1,
-                        description=f"[green]Initialized {model_name}[/green]",
+                        description=(
+                            f"[green]Initialized {model_name}[/green]"
+                        ),
                     )
                 except Exception as e:
                     progress.update(
                         task,
                         completed=1,
-                        description=f"[red]Failed to initialize {model_name}: {e}[/red]",
+                        description=(
+                            "[red]Failed to initialize "
+                            f"{model_name}: {e}[/red]"
+                        ),
                     )
 
         return model_chains
@@ -961,12 +982,18 @@ class MetaMathEnsemble:
     def _display_benchmark_summary(self, benchmark_result):
         """Display a summary of meta-ensemble benchmark results."""
         self.console.print(
-            f"\n[bold]Meta-Ensemble Benchmark Summary: {benchmark_result['dataset']}[/bold]"
+            (
+                "\n[bold]Meta-Ensemble Benchmark Summary: "
+                f"{benchmark_result['dataset']}[/bold]"
+            )
         )
 
         # Create a table for the strategy distribution
         table = Table(
-            title=f"Strategy Distribution ({benchmark_result['num_samples']} problems)"
+            title=(
+                "Strategy Distribution ("
+                f"{benchmark_result['num_samples']} problems)"
+            )
         )
         table.add_column("Strategy", style="cyan")
         table.add_column("Count", style="magenta")
@@ -1045,8 +1072,8 @@ if __name__ == "__main__":
 
     elif choice == "4":
         # Meta-ensemble benchmark
-        solver = MetaMathEnsemble()
-        benchmark_result = solver.benchmark(num_samples=5)
+        meta_solver = MetaMathEnsemble()
+        benchmark_result = meta_solver.benchmark(num_samples=5)
 
     elif choice == "5":
         # Comprehensive benchmarks

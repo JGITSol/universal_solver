@@ -1,5 +1,4 @@
 import numpy as np
-import pytest
 
 from adv_resolver_math.latent_reasoning import LatentReasoningModule
 

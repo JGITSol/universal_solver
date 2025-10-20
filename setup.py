@@ -11,7 +11,10 @@ def read_version() -> str:
 setup(
     name="universal_solver",
     version=read_version(),
-    description="Modular, extensible platform for advanced mathematical problem solving, symbolic regression, and AI-driven research workflows.",
+    description=(
+        "Modular, extensible platform for advanced mathematical problem solving, "
+        "symbolic regression, and AI-driven research workflows."
+    ),
     author="Universal Solver contributors",
     packages=find_packages(
         exclude=["tests*", "htmlcov*", "docs*", "project_guidelines*"]
@@ -25,7 +28,7 @@ setup(
         "langchain==0.1.0",
         "langchain-core>=0.1.7,<0.2",
         "langchain-community==0.0.10",
-        # "langchain-ollama==0.1.1",  # Temporarily removed due to incompatible langchain-core requirements
+        # "langchain-ollama==0.1.1",  # Removed due to langchain-core incompatibility
         # "ollama==0.1.5",
         "pykan==0.2.8",
         "torch==2.6.0",

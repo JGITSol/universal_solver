@@ -1,4 +1,3 @@
-import traceback
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -34,7 +33,7 @@ def test_post_init_connection_error(mock_requests_get, mock_ollama, sample_agent
     mock_requests_get.side_effect = Exception("Connection failed")
 
     with pytest.raises(ConnectionError):
-        solver = MathProblemSolver(sample_agents)
+        MathProblemSolver(sample_agents)
 
 
 @patch("langchain_ollama.OllamaLLM")
@@ -98,7 +97,12 @@ def test_refine_solutions(mock_get, mock_ollama, sample_agents):
     # Test the refine_solutions method
     mock_client = MagicMock()
     # Set a default return value or side effect if needed for parsing
-    mock_client.invoke.return_value = "ANSWER: 5\n\nEXPLANATION: Refined explanation.\n\nCONFIDENCE: 0.9\n\nCHANGES: Made changes."
+    mock_client.invoke.return_value = (
+        "ANSWER: 5\n\n"
+        "EXPLANATION: Refined explanation.\n\n"
+        "CONFIDENCE: 0.9\n\n"
+        "CHANGES: Made changes."
+    )
     # Mock the OllamaLLM class to avoid actual instantiation during solver init
     with patch("math_ensemble_adv_ms_hackaton.OllamaLLM") as mock_ollama_class:
         mock_ollama_instance = MagicMock()
@@ -120,7 +124,7 @@ def test_refine_solutions(mock_get, mock_ollama, sample_agents):
 
     assert len(refined_solutions) == 2
     assert all(isinstance(s, Solution) for s in refined_solutions)
-    # refine_solutions calls get_solution, which calls invoke. Check invoke was called twice.
+    # refine_solutions should trigger two underlying invoke calls
     assert mock_client.invoke.call_count == 2
 
 
@@ -129,17 +133,15 @@ def test_refine_solutions(mock_get, mock_ollama, sample_agents):
 def test_refine_solutions_with_structured_response(
     mock_get, mock_ollama, sample_agents
 ):
-    # Test refine_solutions with a structured response containing ANSWER, EXPLANATION, CONFIDENCE
+    # Structured response includes ANSWER, EXPLANATION, and CONFIDENCE markers
     mock_client = MagicMock()
-    mock_client.invoke.return_value = """
-    ANSWER: 5
-    
-    EXPLANATION: After reviewing the discussion, I'm confident the answer is 5.
-    
-    CONFIDENCE: 0.9
-    
-    CHANGES: I increased my confidence based on the consensus.
-    """
+    mock_client.invoke.return_value = (
+        "ANSWER: 5\n\n"
+        "EXPLANATION: After reviewing the discussion, "
+        "I'm confident the answer is 5.\n\n"
+        "CONFIDENCE: 0.9\n\n"
+        "CHANGES: I increased my confidence based on the consensus."
+    )
     # Mock the OllamaLLM class to avoid actual instantiation during solver init
     with patch("math_ensemble_adv_ms_hackaton.OllamaLLM") as mock_ollama_class:
         mock_ollama_instance = MagicMock()
@@ -159,7 +161,7 @@ def test_refine_solutions_with_structured_response(
     assert len(refined_solutions) == 1
     assert refined_solutions[0].answer == "5"  # Check parsed answer
     assert "reviewing the discussion" in refined_solutions[0].explanation
-    # Confidence is currently hardcoded in get_solution, refine test to mock get_solution if needed
+    # Confidence is fixed in get_solution; mock it for precise values if needed
     # assert refined_solutions[0].confidence == 0.9
 
 
@@ -190,7 +192,9 @@ def test_refine_solutions_error(mock_get, mock_ollama, sample_agents):
     assert (
         refined_solutions[0].answer == "Error"
     )  # get_solution returns 'Error' on exception
-    assert refined_solutions[0].explanation.startswith("Failed to compute: API Error")
+    assert refined_solutions[0].explanation.startswith(
+        "Failed to compute: API Error"
+    )
     assert refined_solutions[0].confidence == 0.0
 
 
@@ -235,12 +239,6 @@ def test_solve_with_discussion_rounds(mock_get, mock_ollama, sample_agents):
     mock_client = MagicMock()
     mock_ollama.return_value = mock_client
     solver = MathProblemSolver(sample_agents)
-
-    # Initial solutions with low confidence
-    initial_solutions = [
-        Solution("Expert", "x=5", "Explanation 1", 0.4),
-        Solution("Creative", "5", "Explanation 2", 0.3),
-    ]
 
     # Mock methods
     solver.get_solution = MagicMock(

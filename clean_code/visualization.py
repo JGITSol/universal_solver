@@ -9,7 +9,8 @@ logger = get_logger(__name__)
 
 class MathVisualizer:
     """
-    Advanced visualization system for mathematical proofs, constructions, and symbolic regression.
+    Advanced visualization system for mathematical proofs, constructions, and
+    symbolic regression.
     """
 
     def __init__(self, figsize=(10, 8), style="modern", interactive=True):
@@ -62,12 +63,14 @@ class MathVisualizer:
         """
         fig, ax = plt.subplots(figsize=self.figsize)
         entities = formalization.get("entities", [])
+        logger.debug("Rendering %d entities", len(entities))
         # ... (drawing logic omitted for brevity)
         plt.show()
         logger.info("Geometry problem visualization completed")
         plt.savefig("geometry_problem_visualization.png")
         logger.info(
-            "Geometry problem visualization saved to geometry_problem_visualization.png"
+            "Geometry problem visualization saved to "
+            "geometry_problem_visualization.png"
         )
         return fig
 
@@ -86,7 +89,8 @@ class MathVisualizer:
         plt.show()
         plt.savefig("symbolic_regression_visualization.png")
         logger.info(
-            "Symbolic regression visualization saved to symbolic_regression_visualization.png"
+            "Symbolic regression visualization saved to "
+            "symbolic_regression_visualization.png"
         )
 
     def visualize(self, problem, result):

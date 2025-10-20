@@ -1,5 +1,3 @@
-import pytest
-
 from adv_resolver_math.symbolic_engine import EnhancedSymbolicEngine, MathDomain
 
 

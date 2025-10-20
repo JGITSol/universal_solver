@@ -1,7 +1,4 @@
 import json
-import os
-
-import pytest
 
 from adv_resolver_math.memory import MemoryManager
 
