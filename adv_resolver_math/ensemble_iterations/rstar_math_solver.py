@@ -186,9 +186,7 @@ class RStarMathSolver(LatentSpaceMathSolver):
         for sol in sols:
             sol.verification_score = self.code_verification(problem, sol)
             sol.process_reward = self.calculate_process_reward(sol)
-            sol.confidence = (
-                0.6 * sol.verification_score + 0.4 * sol.process_reward
-            )
+            sol.confidence = 0.6 * sol.verification_score + 0.4 * sol.process_reward
         # Stage 3: Evolutionary iterations (customizable)
         survivors = sols
         for _ in range(self.evolution_rounds):
@@ -196,9 +194,7 @@ class RStarMathSolver(LatentSpaceMathSolver):
             for sol in refined:
                 sol.verification_score = self.code_verification(problem, sol)
                 sol.process_reward = self.calculate_process_reward(sol)
-                sol.confidence = (
-                    0.6 * sol.verification_score + 0.4 * sol.process_reward
-                )
+                sol.confidence = 0.6 * sol.verification_score + 0.4 * sol.process_reward
             survivors = sorted(refined, key=lambda s: s.confidence, reverse=True)
             limit = max(1, len(self.agents) // 2)
             survivors = survivors[:limit]

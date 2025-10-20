@@ -89,7 +89,7 @@ class MathProblemSolver:
         # Prefer explicit environment variable for CI/dev control
         if os.environ.get("USOLVE_TEST_MODE") == "1":
             use_dummy = True
-    # Pytest sets runtime markers; detect test-run environment as a fallback
+        # Pytest sets runtime markers; detect test-run environment as a fallback
         if not use_dummy and "pytest" in sys.modules:
             use_dummy = True
 

@@ -192,9 +192,7 @@ def test_refine_solutions_error(mock_get, mock_ollama, sample_agents):
     assert (
         refined_solutions[0].answer == "Error"
     )  # get_solution returns 'Error' on exception
-    assert refined_solutions[0].explanation.startswith(
-        "Failed to compute: API Error"
-    )
+    assert refined_solutions[0].explanation.startswith("Failed to compute: API Error")
     assert refined_solutions[0].confidence == 0.0
 
 

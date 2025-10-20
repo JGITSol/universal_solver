@@ -10,11 +10,7 @@ from typing import List, Optional
 import matplotlib.pyplot as plt
 import pandas as pd
 import sympy
-from datasets import (
-    DatasetDict,
-    IterableDatasetDict,
-    load_dataset,
-)
+from datasets import DatasetDict, IterableDatasetDict, load_dataset
 from langchain.callbacks.base import BaseCallbackHandler
 
 # LangChain components
@@ -212,18 +208,13 @@ class MathEnsembleSolver:
                     progress.update(
                         task,
                         completed=1,
-                        description=(
-                            f"[green]Initialized {model_name}[/green]"
-                        ),
+                        description=f"[green]Initialized {model_name}[/green]",
                     )
                 except Exception as e:
                     progress.update(
                         task,
                         completed=1,
-                        description=(
-                            "[red]Failed to initialize "
-                            f"{model_name}: {e}[/red]"
-                        ),
+                        description=f"[red]Failed to init {model_name}: {e}[/red]",
                     )
 
         return model_chains
@@ -991,8 +982,7 @@ class MetaMathEnsemble:
         # Create a table for the strategy distribution
         table = Table(
             title=(
-                "Strategy Distribution ("
-                f"{benchmark_result['num_samples']} problems)"
+                "Strategy Distribution (" f"{benchmark_result['num_samples']} problems)"
             )
         )
         table.add_column("Strategy", style="cyan")

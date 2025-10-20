@@ -6,11 +6,7 @@ diagrams, supporting both Ollama and LM Studio backends.
 """
 
 import os
-from typing import (
-    Any,
-    Dict,
-    Optional,
-)
+from typing import Any, Dict, Optional
 
 
 class GLLaVASolver:

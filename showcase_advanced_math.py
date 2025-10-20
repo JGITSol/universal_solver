@@ -21,7 +21,11 @@ from adv_resolver_math.ensemble_iterations.memory_sharing_solver import (
     MemorySharingMathSolver,
 )
 from adv_resolver_math.ensemble_iterations.rstar_math_solver import RStarMathSolver
-from adv_resolver_math.math_ensemble_adv_ms_hackaton import Agent, Solution, VotingResult
+from adv_resolver_math.math_ensemble_adv_ms_hackaton import (
+    Agent,
+    Solution,
+    VotingResult,
+)
 
 # Setup rich console
 theme_console = Console()
