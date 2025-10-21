@@ -41,5 +41,5 @@ class SymbolicRegressionPipeline:
             "x_test": x_test,
             "y_test": y_test,
             "y_pred": y_pred.detach().numpy(),
-            "formula": symbolic_formula,
+            "formula": str(symbolic_formula) if symbolic_formula is not None else None,
         }

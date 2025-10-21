@@ -25,4 +25,6 @@ def test_latent_voting(solver):
         Solution("B", "5", "Explanation 2", 0.6),
     ]
     result = solver.vote_on_solutions(solutions)
-    assert result in solutions
+    assert result.answer in [s.answer for s in solutions]
+    assert result.confidence >= 0
+    assert len(result.agents_in_agreement) > 0

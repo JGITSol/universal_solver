@@ -82,3 +82,7 @@ models/
 .math_cache/
 .mypy_cache/
 .pytest_cache/
+math_cache/
+model/
+*.states
+*.history
