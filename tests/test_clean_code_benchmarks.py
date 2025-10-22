@@ -35,8 +35,11 @@ def test_ensemble_solver_benchmark():
 @pytest.mark.benchmark
 def test_symbolic_regression_benchmark():
     with warnings.catch_warnings():
-        warnings.filterwarnings("ignore", category=UserWarning, 
-                              message="Converting a tensor with requires_grad=True")
+        warnings.filterwarnings(
+            "ignore",
+            category=UserWarning,
+            message="Converting a tensor with requires_grad=True",
+        )
         kan = KAN(width=[1, 3, 1], grid=5, k=3)
         pipeline = SymbolicRegressionPipeline(kan)
         result = pipeline.run(steps=100)
