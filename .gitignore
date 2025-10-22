@@ -21,7 +21,6 @@ dist/
 .pytest_cache/
 
 # Coverage
-htmlcov/
 coverage.*
 
 # Jupyter
