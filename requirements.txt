@@ -7,8 +7,9 @@ uv>=0.4.0
 langchain==0.1.0
 langchain-core>=0.1.7,<0.2
 langchain-community==0.0.10
-# langchain-ollama==0.1.1  # optional / commented out in setup.py
-# ollama==0.1.5
+langchain-ollama>=0.1.1
+ollama>=0.1.5
+colorama>=0.4.6
 pykan==0.2.8
 torch==2.6.0
 torchvision==0.21.0
@@ -27,7 +28,7 @@ datasets==3.5.0
 python-dotenv==1.0.1
 rich==13.9.4
 asyncio==3.4.3
-typing-extensions==4.13.1
+typing-extensions>=4.13.2
 Pillow>=10.2.0,<11.0.0
 tenacity>=8.1.0,<9.0.0
 transformers==4.50.0
