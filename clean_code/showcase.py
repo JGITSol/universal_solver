@@ -1,5 +1,3 @@
-from kan import KAN
-
 from adv_resolver_math.ensemble_iterations.enhanced_solver import EnhancedMathSolver
 from adv_resolver_math.ensemble_iterations.latent_space_solver import (
     LatentSpaceMathSolver,
@@ -11,6 +9,7 @@ from adv_resolver_math.ensemble_iterations.rstar_math_solver import RStarMathSol
 
 # === REAL AGENT AND SOLVER IMPORTS ===
 from adv_resolver_math.math_ensemble_adv_ms_hackaton import Agent, MathProblemSolver
+from kan import KAN
 
 from .knowledge_management import KnowledgeManagementSystem
 from .neuro_symbolic_system import NeuroSymbolicMathSystem
