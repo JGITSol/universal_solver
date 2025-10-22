@@ -5,7 +5,7 @@ from __future__ import annotations
 import time
 from typing import Dict, Optional
 
-from langchain.callbacks.base import BaseCallbackHandler
+from langchain_core.callbacks.base import BaseCallbackHandler
 from rich.console import Console
 
 

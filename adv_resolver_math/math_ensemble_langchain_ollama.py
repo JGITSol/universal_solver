@@ -11,11 +11,11 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import sympy
 from datasets import DatasetDict, IterableDatasetDict, load_dataset
-from langchain.callbacks.base import BaseCallbackHandler
+from langchain_core.callbacks.base import BaseCallbackHandler
 
 # LangChain components
-from langchain.llms import Ollama
-from langchain.prompts import PromptTemplate
+from langchain_community.llms import Ollama
+from langchain_core.prompts import PromptTemplate
 from rich.console import Console
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TextColumn
