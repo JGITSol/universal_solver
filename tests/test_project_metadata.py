@@ -3,8 +3,6 @@
 import re
 from pathlib import Path
 
-import pytest
-
 
 def test_readme_has_badges():
     """Test that README.md contains industry-standard badges."""
