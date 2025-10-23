@@ -5,6 +5,7 @@ target-version = ['py311']
 [tool.isort]
 profile = "black"
 known_first_party = ["adv_resolver_math", "clean_code"]
+known_third_party = ["kan"]
 skip = [
 	"adv_res_venv",
 	"adv_resolver_math/adv_res_venv",
