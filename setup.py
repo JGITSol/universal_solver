@@ -15,7 +15,17 @@ setup(
         "Modular, extensible platform for advanced mathematical problem solving, "
         "symbolic regression, and AI-driven research workflows."
     ),
+    long_description=open("README.md", encoding="utf-8").read(),
+    long_description_content_type="text/markdown",
     author="Universal Solver contributors",
+    author_email="",
+    url="https://github.com/JGITSol/universal_solver",
+    project_urls={
+        "Bug Tracker": "https://github.com/JGITSol/universal_solver/issues",
+        "Documentation": "https://github.com/JGITSol/universal_solver/tree/main/docs",
+        "Source Code": "https://github.com/JGITSol/universal_solver",
+        "CI/CD": "https://github.com/JGITSol/universal_solver/actions",
+    },
     packages=find_packages(
         exclude=["tests*", "htmlcov*", "docs*", "project_guidelines*"]
     ),
@@ -64,8 +74,61 @@ setup(
     entry_points={"console_scripts": ["usolve=adv_resolver_math.cli:main"]},
     include_package_data=True,
     classifiers=[
-        "Programming Language :: Python :: 3",
+        # Development Status
+        "Development Status :: 3 - Alpha",
+        # Intended Audience
+        "Intended Audience :: Developers",
+        "Intended Audience :: Science/Research",
+        "Intended Audience :: Education",
+        # Topic
+        "Topic :: Scientific/Engineering",
+        "Topic :: Scientific/Engineering :: Mathematics",
+        "Topic :: Scientific/Engineering :: Artificial Intelligence",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+        # License
         "License :: OSI Approved :: MIT License",
+        # Operating System
         "Operating System :: OS Independent",
+        "Operating System :: Microsoft :: Windows",
+        "Operating System :: POSIX :: Linux",
+        "Operating System :: MacOS",
+        # Programming Language
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3 :: Only",
+        # Environment
+        "Environment :: Console",
+        "Environment :: GPU",
+        # Framework
+        "Framework :: Jupyter",
+        # Natural Language
+        "Natural Language :: English",
+        # Typing
+        "Typing :: Typed",
+    ],
+    keywords=[
+        "mathematics",
+        "solver",
+        "symbolic-mathematics",
+        "symbolic-regression",
+        "ai",
+        "machine-learning",
+        "deep-learning",
+        "neural-networks",
+        "benchmark",
+        "langchain",
+        "ollama",
+        "pytorch",
+        "sympy",
+        "kan",
+        "kolmogorov-arnold-networks",
+        "ensemble-learning",
+        "math-problem-solving",
+        "gsm8k",
+        "math-dataset",
     ],
 )
