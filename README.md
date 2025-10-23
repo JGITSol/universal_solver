@@ -2,8 +2,33 @@
 
 # Universal Solver
 
+<!-- CI/CD and Build Status -->
+[![CI](https://github.com/JGITSol/universal_solver/actions/workflows/ci.yml/badge.svg)](https://github.com/JGITSol/universal_solver/actions/workflows/ci.yml)
 [![Test Coverage](./coverage.svg)](./htmlcov/index.html)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
+
+<!-- Language and Version -->
+[![Python Version](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
+<!-- License -->
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+<!-- Repository Stats -->
+[![GitHub stars](https://img.shields.io/github/stars/JGITSol/universal_solver?style=social)](https://github.com/JGITSol/universal_solver/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/JGITSol/universal_solver?style=social)](https://github.com/JGITSol/universal_solver/network/members)
+[![GitHub watchers](https://img.shields.io/github/watchers/JGITSol/universal_solver?style=social)](https://github.com/JGITSol/universal_solver/watchers)
+
+<!-- Activity -->
+[![GitHub issues](https://img.shields.io/github/issues/JGITSol/universal_solver)](https://github.com/JGITSol/universal_solver/issues)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/JGITSol/universal_solver)](https://github.com/JGITSol/universal_solver/pulls)
+[![GitHub contributors](https://img.shields.io/github/contributors/JGITSol/universal_solver)](https://github.com/JGITSol/universal_solver/graphs/contributors)
+[![GitHub last commit](https://img.shields.io/github/last-commit/JGITSol/universal_solver)](https://github.com/JGITSol/universal_solver/commits)
+
+<!-- Repository Info -->
+[![GitHub repo size](https://img.shields.io/github/repo-size/JGITSol/universal_solver)](https://github.com/JGITSol/universal_solver)
+[![GitHub language count](https://img.shields.io/github/languages/count/JGITSol/universal_solver)](https://github.com/JGITSol/universal_solver)
+[![GitHub top language](https://img.shields.io/github/languages/top/JGITSol/universal_solver)](https://github.com/JGITSol/universal_solver)
 
 ---
 
